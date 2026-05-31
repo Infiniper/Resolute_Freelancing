@@ -59,3 +59,37 @@ body {
 /* ── Hide default cursor (custom cursor replaces it) ── */
 * { cursor: none; }
 a, button { cursor: none; }
+
+/* ── Hero Buttons ─────────────────────── */
+.hero-btn-primary {
+  display: inline-block;
+  padding: 1rem 2rem;
+  background: #3B82F6;
+  color: #ffffff;
+  font-weight: 600;
+  border-radius: 0.5rem;
+  text-decoration: none;
+  box-shadow: 0 0 24px rgba(59, 130, 246, 0.4);
+  transition: all 0.3s ease;
+}
+.hero-btn-primary:hover {
+  background: #60A5FA;
+  box-shadow: 0 0 42px rgba(59, 130, 246, 0.65);
+  transform: translateY(-2px);
+}
+
+.hero-btn-secondary {
+  display: inline-block;
+  padding: 1rem 2rem;
+  border: 1.5px solid #334155;
+  color: #94A3B8;
+  font-weight: 600;
+  border-radius: 0.5rem;
+  text-decoration: none;
+  transition: all 0.3s ease;
+}
+.hero-btn-secondary:hover {
+  border-color: #3B82F6;
+  color: #F1F5F9;
+  transform: translateY(-2px);
+}
