@@ -1,0 +1,61 @@
+/* ① Google Fonts — MUST be first, before everything else */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+/* ② Tailwind v4 */
+@import "tailwindcss";
+
+/* ③ Design tokens — electric blue scheme */
+@theme {
+  /* Backgrounds — dark navy, not pure black (blue pops better against navy) */
+  --color-site-dark:    #080B14;
+  --color-site-surface: #0D1120;
+  --color-site-card:    #111827;
+
+  /* Electric Blue Accent */
+  --color-site-accent:        #3B82F6;
+  --color-site-accent-bright: #60A5FA;
+
+  /* Text */
+  --color-site-fore:       #F1F5F9;
+  --color-site-fore-dim:   #94A3B8;
+  --color-site-fore-faint: #475569;
+
+  /* Borders */
+  --color-site-rule:       #1E293B;
+  --color-site-rule-light: #334155;
+
+  /* Font */
+  --font-sans: 'Inter', system-ui, sans-serif;
+}
+
+/* ── Reset ───────────────────────────── */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html { scroll-behavior: auto; }
+
+body {
+  background-color: #080B14;
+  color: #F1F5F9;
+  font-family: 'Inter', sans-serif;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── Custom Scrollbar ─────────────────── */
+::-webkit-scrollbar       { width: 4px; }
+::-webkit-scrollbar-track { background: #080B14; }
+::-webkit-scrollbar-thumb { background: #3B82F6; border-radius: 2px; }
+
+/* ── Text Selection ───────────────────── */
+::selection {
+  background: rgba(59, 130, 246, 0.3);
+  color: #F1F5F9;
+}
+
+/* ── Hide default cursor (custom cursor replaces it) ── */
+* { cursor: none; }
+a, button { cursor: none; }
