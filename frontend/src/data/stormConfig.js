@@ -17,4 +17,4 @@ export const lerp = (a, b, t) => a + (b - a) * t
 export const range = (p, min, max) => clamp01((p - min) / (max - min))
 
 // Resting position of the "s", local to the name group. TUNE x in the browser.
-export const S_BASE = { x: 10.6, y: 0, z: 0 }
+export const S_BASE = { x: 4.6, y: -0.45, z: -0.1 }
