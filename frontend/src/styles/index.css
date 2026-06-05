@@ -1,10 +1,11 @@
-/* ① Google Fonts — MUST be first, before everything else */
-@import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap");
+/* ① Web fonts — MUST be first. Clash Display (display) + Satoshi (body),
+      both from Fontshare; system fonts fall back cleanly if it's unreachable. */
+@import url("https://api.fontshare.com/v2/css?f[]=clash-display@600,700&f[]=satoshi@400,500,700&display=swap");
 
 /* ② Tailwind v4 */
 @import "tailwindcss";
 
-/* ③ Design tokens — electric blue scheme */
+/* ③ Design tokens — electric blue on deep navy */
 @theme {
   /* Backgrounds — dark navy, not pure black (blue pops better against navy) */
   --color-site-dark: #080b14;
@@ -24,8 +25,9 @@
   --color-site-rule: #1e293b;
   --color-site-rule-light: #334155;
 
-  /* Font */
-  --font-sans: "Inter", system-ui, sans-serif;
+  /* Fonts */
+  --font-sans: "Satoshi", "Inter", system-ui, sans-serif;
+  --font-display: "Clash Display", "Satoshi", system-ui, sans-serif;
 }
 
 /* ── Reset ───────────────────────────── */
@@ -42,11 +44,12 @@ html {
 }
 
 body {
-  background-color: #080b14;
+  background-color: #05070e;
   color: #f1f5f9;
-  font-family: "Inter", sans-serif;
+  font-family: var(--font-sans);
   overflow-x: hidden;
   -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
 }
 
 /* ── Custom Scrollbar ─────────────────── */
@@ -54,7 +57,7 @@ body {
   width: 4px;
 }
 ::-webkit-scrollbar-track {
-  background: #080b14;
+  background: #05070e;
 }
 ::-webkit-scrollbar-thumb {
   background: #3b82f6;
@@ -67,45 +70,361 @@ body {
   color: #f1f5f9;
 }
 
-/* ── Hide default cursor (custom cursor replaces it) ── */
-* {
-  cursor: none;
-}
-a,
-button {
-  cursor: none;
+/* ── Custom cursor: hide the system cursor only on precise-pointer devices,
+      where CustomCursor renders. Touch / coarse pointers keep their default. */
+@media (hover: hover) and (pointer: fine) {
+  * {
+    cursor: none;
+  }
 }
 
-/* ── Hero Buttons ─────────────────────── */
-.hero-btn-primary {
-  display: inline-block;
-  padding: 1rem 2rem;
-  background: #3b82f6;
-  color: #ffffff;
-  font-weight: 600;
-  border-radius: 0.5rem;
-  text-decoration: none;
-  box-shadow: 0 0 24px rgba(59, 130, 246, 0.4);
-  transition: all 0.3s ease;
+/* ── Keyboard focus — visible, on-brand (refined further in the a11y pass) ── */
+:focus-visible {
+  outline: 2px solid var(--color-site-accent-bright);
+  outline-offset: 3px;
+  border-radius: 2px;
 }
-.hero-btn-primary:hover {
-  background: #60a5fa;
+
+/* ═══════════════════════════════════════
+   Layout shell
+   ═══════════════════════════════════════ */
+.site-main {
+  position: relative;
+  z-index: 1;
+}
+
+/* Reduced-motion / no-canvas fallback backdrop */
+.static-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(120% 90% at 50% -10%, rgba(59, 130, 246, 0.18), transparent 55%),
+    radial-gradient(80% 60% at 80% 110%, rgba(96, 165, 250, 0.12), transparent 60%),
+    #05070e;
+}
+
+/* ═══════════════════════════════════════
+   Navigation
+   ═══════════════════════════════════════ */
+.nav-root {
+  position: fixed;
+  inset: 0 0 auto 0;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
+  padding: 1.1rem clamp(1.25rem, 4vw, 3rem);
+  background: linear-gradient(to bottom, rgba(5, 7, 14, 0.72), rgba(5, 7, 14, 0));
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+.nav-mark {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 1.15rem;
+  letter-spacing: -0.01em;
+  color: var(--color-site-fore);
+  text-decoration: none;
+  white-space: nowrap;
+}
+.nav-mark:hover {
+  color: var(--color-site-accent-bright);
+}
+
+.nav-links {
+  display: flex;
+  gap: clamp(0.75rem, 2vw, 1.75rem);
+  align-items: center;
+}
+
+.nav-link {
+  position: relative;
+  font-size: 0.82rem;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  color: var(--color-site-fore-dim);
+  text-decoration: none;
+  padding: 0.25rem 0;
+  transition: color 0.25s ease;
+}
+.nav-link::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -2px;
+  height: 1px;
+  width: 100%;
+  background: var(--color-site-accent-bright);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.3s ease;
+}
+.nav-link:hover,
+.nav-link.is-active {
+  color: var(--color-site-fore);
+}
+.nav-link:hover::after,
+.nav-link.is-active::after {
+  transform: scaleX(1);
+}
+
+.nav-cta {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #fff;
+  text-decoration: none;
+  padding: 0.55rem 1.1rem;
+  border-radius: 0.5rem;
+  background: var(--color-site-accent);
+  box-shadow: 0 0 22px rgba(59, 130, 246, 0.38);
+  transition: background 0.25s ease, box-shadow 0.25s ease, transform 0.25s ease;
+  white-space: nowrap;
+}
+.nav-cta:hover {
+  background: var(--color-site-accent-bright);
+  box-shadow: 0 0 34px rgba(59, 130, 246, 0.6);
+  transform: translateY(-1px);
+}
+
+/* Phase A: collapse the inline link list on small screens (real overlay menu
+   arrives in Phase B). */
+@media (max-width: 720px) {
+  .nav-links {
+    display: none;
+  }
+}
+
+/* ═══════════════════════════════════════
+   Typography helpers
+   ═══════════════════════════════════════ */
+.eyebrow {
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--color-site-accent-bright);
+}
+
+.display-xl {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: clamp(2.4rem, 7vw, 5.2rem);
+  line-height: 1.02;
+  letter-spacing: -0.02em;
+  color: var(--color-site-fore);
+}
+
+.display-lg {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: clamp(2rem, 5.5vw, 3.8rem);
+  line-height: 1.05;
+  letter-spacing: -0.015em;
+  color: var(--color-site-fore);
+}
+
+.lead {
+  font-size: clamp(1rem, 1.6vw, 1.2rem);
+  line-height: 1.6;
+  color: var(--color-site-fore-dim);
+  max-width: 42ch;
+}
+
+/* ═══════════════════════════════════════
+   Buttons
+   ═══════════════════════════════════════ */
+.btn-primary,
+.btn-ghost {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.9rem 1.7rem;
+  font-weight: 600;
+  font-size: 0.95rem;
+  border-radius: 0.55rem;
+  text-decoration: none;
+  transition: all 0.25s ease;
+}
+.btn-primary {
+  background: var(--color-site-accent);
+  color: #fff;
+  box-shadow: 0 0 24px rgba(59, 130, 246, 0.4);
+}
+.btn-primary:hover {
+  background: var(--color-site-accent-bright);
   box-shadow: 0 0 42px rgba(59, 130, 246, 0.65);
   transform: translateY(-2px);
 }
-
-.hero-btn-secondary {
-  display: inline-block;
-  padding: 1rem 2rem;
-  border: 1.5px solid #334155;
-  color: #94a3b8;
-  font-weight: 600;
-  border-radius: 0.5rem;
-  text-decoration: none;
-  transition: all 0.3s ease;
+.btn-ghost {
+  border: 1.5px solid var(--color-site-rule-light);
+  color: var(--color-site-fore-dim);
 }
-.hero-btn-secondary:hover {
-  border-color: #3b82f6;
-  color: #f1f5f9;
+.btn-ghost:hover {
+  border-color: var(--color-site-accent);
+  color: var(--color-site-fore);
   transform: translateY(-2px);
+}
+
+/* ═══════════════════════════════════════
+   Home — storm track + payoff
+   ═══════════════════════════════════════ */
+.storm-track {
+  height: 600vh;
+}
+.storm-sticky {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  padding-bottom: 2.5rem;
+  pointer-events: none;
+}
+
+.scroll-hint {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+}
+.scroll-hint span:first-child {
+  font-size: 0.56rem;
+  letter-spacing: 0.35em;
+  text-transform: uppercase;
+  color: var(--color-site-fore-faint);
+}
+.scroll-hint-line {
+  width: 1px;
+  height: 28px;
+  background: linear-gradient(to bottom, #475569, transparent);
+}
+
+.home-payoff {
+  position: relative;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  gap: 1.5rem;
+  padding: 6rem clamp(1.25rem, 5vw, 3rem);
+  /* Subtle dark halo so copy stays readable over the 3D "surprise!" behind it. */
+  background: radial-gradient(ellipse 70% 60% at 50% 50%, rgba(5, 7, 14, 0.7), transparent 75%);
+}
+.home-payoff .lead {
+  max-width: 52ch;
+}
+
+.cta-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  justify-content: center;
+  margin-top: 0.5rem;
+}
+
+.trust-strip {
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem 1.4rem;
+  justify-content: center;
+  margin-top: 1.5rem;
+  max-width: 60ch;
+}
+.trust-strip li {
+  position: relative;
+  font-size: 0.7rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--color-site-fore-dim);
+}
+.trust-strip li + li::before {
+  content: "·";
+  position: absolute;
+  left: -0.8rem;
+  color: var(--color-site-fore-faint);
+}
+
+/* ═══════════════════════════════════════
+   Generic interior page shell (placeholder pages)
+   ═══════════════════════════════════════ */
+.page-shell {
+  position: relative;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 1.25rem;
+  max-width: 68rem;
+  margin: 0 auto;
+  padding: 8rem clamp(1.25rem, 5vw, 3rem) 6rem;
+}
+
+/* ═══════════════════════════════════════
+   Footer
+   ═══════════════════════════════════════ */
+.footer-root {
+  position: relative;
+  z-index: 1;
+  border-top: 1px solid var(--color-site-rule);
+  background: rgba(5, 7, 14, 0.7);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  padding: 3rem clamp(1.25rem, 5vw, 3rem) 1.5rem;
+}
+.footer-inner {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2rem;
+  justify-content: space-between;
+  align-items: flex-start;
+  max-width: 72rem;
+  margin: 0 auto;
+}
+.footer-mark {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 1.3rem;
+  color: var(--color-site-fore);
+}
+.footer-tag {
+  margin-top: 0.4rem;
+  font-size: 0.85rem;
+  color: var(--color-site-fore-dim);
+}
+.footer-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.25rem;
+}
+.footer-link {
+  font-size: 0.85rem;
+  color: var(--color-site-fore-dim);
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+.footer-link:hover {
+  color: var(--color-site-accent-bright);
+}
+.footer-base {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 1.5rem;
+  justify-content: space-between;
+  max-width: 72rem;
+  margin: 2.5rem auto 0;
+  padding-top: 1.25rem;
+  border-top: 1px solid var(--color-site-rule);
+  font-size: 0.72rem;
+  letter-spacing: 0.06em;
+  color: var(--color-site-fore-faint);
 }
