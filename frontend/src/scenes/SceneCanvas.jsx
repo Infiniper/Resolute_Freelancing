@@ -51,6 +51,7 @@ export default function SceneCanvas({ route }) {
 
   return (
     <Canvas
+      aria-hidden="true"
       style={{ position: 'fixed', inset: 0, zIndex: 0, pointerEvents: 'none' }}
       dpr={dpr}
       camera={{ position: WAYPOINTS['/'].pos, fov: 42, near: 0.1, far: 200 }}

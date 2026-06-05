@@ -10,6 +10,9 @@ gsap.registerPlugin(ScrollTrigger)
 // The instance is stashed on `signals` so navigation can reset scroll to top.
 export default function useSmoothScroll() {
   useEffect(() => {
+    // Respect reduced motion — fall back to native scrolling, no smoothing.
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
+
     const lenis = new Lenis({ duration: 1.2 })
     signals.lenis = lenis
     if (import.meta.env.DEV) window.__lenis = lenis // dev-only handle for debugging/QA

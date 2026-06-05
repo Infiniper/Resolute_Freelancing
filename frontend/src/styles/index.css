@@ -115,11 +115,37 @@ body {
   background: rgba(59, 130, 246, 0.08);
 }
 
-/* ── Keyboard focus — visible, on-brand (refined further in the a11y pass) ── */
+/* ── Keyboard focus — visible, on-brand ── */
 :focus-visible {
   outline: 2px solid var(--color-site-accent-bright);
   outline-offset: 3px;
   border-radius: 2px;
+}
+/* Programmatic focus target (skip-link lands here) shouldn't show a huge ring. */
+.site-main:focus {
+  outline: none;
+}
+
+/* ── Skip to content ── */
+.skip-link {
+  position: fixed;
+  top: 0.75rem;
+  left: 0.75rem;
+  z-index: 10001;
+  transform: translateY(-160%);
+  background: var(--color-site-accent);
+  color: #fff;
+  font-weight: 600;
+  font-size: 0.85rem;
+  padding: 0.6rem 1rem;
+  border-radius: 0.5rem;
+  text-decoration: none;
+  transition: transform 0.2s ease;
+}
+.skip-link:focus {
+  transform: translateY(0);
+  outline: 2px solid #fff;
+  outline-offset: 2px;
 }
 
 /* ═══════════════════════════════════════
@@ -997,6 +1023,15 @@ body {
   outline: none;
   border-color: var(--color-site-accent);
   box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.18);
+}
+/* Invalid fields get a red border too, so the error isn't text-only. */
+.field input[aria-invalid='true'],
+.field textarea[aria-invalid='true'] {
+  border-color: #f87171;
+}
+.field input[aria-invalid='true']:focus,
+.field textarea[aria-invalid='true']:focus {
+  box-shadow: 0 0 0 3px rgba(248, 113, 113, 0.18);
 }
 .field input::placeholder,
 .field textarea::placeholder {

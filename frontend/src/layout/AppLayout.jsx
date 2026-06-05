@@ -53,6 +53,7 @@ export default function AppLayout() {
 
   return (
     <>
+      <a href="#main" className="skip-link">Skip to content</a>
       <CustomCursor />
       {reduced ? <StaticBackdrop /> : <SceneCanvas route={location.pathname} />}
       {!reduced && <Preloader />}
@@ -60,7 +61,7 @@ export default function AppLayout() {
 
       <Nav />
 
-      <main id="main" className="site-main">
+      <main id="main" className="site-main" tabIndex={-1}>
         <AnimatePresence mode="wait" onExitComplete={onExitComplete}>
           <PageTransition key={location.pathname}>
             <Routes location={location}>

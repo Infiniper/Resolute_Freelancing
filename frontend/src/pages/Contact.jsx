@@ -62,22 +62,48 @@ export default function Contact() {
         <div className="contact-grid">
           <Reveal className="glass-card contact-form-card">
             <form className="contact-form" onSubmit={onSubmit} noValidate>
-              <label className="field">
+              <label className="field" htmlFor="cf-name">
                 <span className="field-label">Name</span>
-                <input name="name" type="text" autoComplete="name" placeholder="Your name" />
-                {errors.name && <span className="field-error">{errors.name}</span>}
+                <input
+                  id="cf-name"
+                  name="name"
+                  type="text"
+                  autoComplete="name"
+                  placeholder="Your name"
+                  required
+                  aria-invalid={errors.name ? 'true' : undefined}
+                  aria-describedby={errors.name ? 'cf-name-err' : undefined}
+                />
+                {errors.name && <span id="cf-name-err" className="field-error">{errors.name}</span>}
               </label>
 
-              <label className="field">
+              <label className="field" htmlFor="cf-email">
                 <span className="field-label">Email</span>
-                <input name="email" type="email" autoComplete="email" placeholder="you@example.com" />
-                {errors.email && <span className="field-error">{errors.email}</span>}
+                <input
+                  id="cf-email"
+                  name="email"
+                  type="email"
+                  autoComplete="email"
+                  placeholder="you@example.com"
+                  required
+                  aria-invalid={errors.email ? 'true' : undefined}
+                  aria-describedby={errors.email ? 'cf-email-err' : undefined}
+                />
+                {errors.email && <span id="cf-email-err" className="field-error">{errors.email}</span>}
               </label>
 
-              <label className="field">
+              <label className="field" htmlFor="cf-message">
                 <span className="field-label">Project</span>
-                <textarea name="message" rows={5} placeholder="What are you building, and by when?" />
-                {errors.message && <span className="field-error">{errors.message}</span>}
+                <textarea
+                  id="cf-message"
+                  name="message"
+                  rows={5}
+                  placeholder="What are you building, and by when?"
+                  required
+                  aria-invalid={errors.message ? 'true' : undefined}
+                  aria-describedby={errors.message ? 'cf-message-err' : undefined}
+                />
+                {errors.message && <span id="cf-message-err" className="field-error">{errors.message}</span>}
               </label>
 
               <button type="submit" className="btn-primary" disabled={status === 'sending'}>
