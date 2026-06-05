@@ -1,6 +1,6 @@
-import ScenePlaceholder from './ScenePlaceholder'
+import FloatingPanels from './FloatingPanels'
 
-// Phase C: 3D-framed pricing panels. Placeholder for now.
+// A taller, stacked arrangement to echo pricing rows.
 export default function PricingScene() {
-  return <ScenePlaceholder color="#2f7fef" />
+  return <FloatingPanels count={7} color="#2f7fef" area={[9, 13, 6]} size={[2.6, 1.4]} />
 }

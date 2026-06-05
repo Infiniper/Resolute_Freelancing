@@ -1,6 +1,6 @@
-import ScenePlaceholder from './ScenePlaceholder'
+import FloatingPanels from './FloatingPanels'
 
-// Phase C: six floating service panels. Placeholder for now.
+// Six offerings → a loose cluster of glowing panels at the Services vantage.
 export default function ServicesScene() {
-  return <ScenePlaceholder color="#3b82f6" />
+  return <FloatingPanels count={6} color="#3b82f6" area={[13, 9, 7]} size={[1.9, 2.5]} />
 }

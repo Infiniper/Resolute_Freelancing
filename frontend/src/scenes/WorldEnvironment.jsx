@@ -38,7 +38,14 @@ export default function WorldEnvironment({ mobile }) {
         speed={0.6}
       />
 
-      <SpaceDebris count={mobile ? 5 : 10} progress={calm} />
+      {/* Spread wide and small across the whole flight path so it reads as
+          depth between vantages, not clutter over the hero text. */}
+      <SpaceDebris
+        count={mobile ? 8 : 16}
+        progress={calm}
+        spread={[120, 70, 48]}
+        scale={[0.1, 0.42]}
+      />
     </>
   )
 }

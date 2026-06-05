@@ -12,6 +12,7 @@ export default function useSmoothScroll() {
   useEffect(() => {
     const lenis = new Lenis({ duration: 1.2 })
     signals.lenis = lenis
+    if (import.meta.env.DEV) window.__lenis = lenis // dev-only handle for debugging/QA
     lenis.on('scroll', ScrollTrigger.update)
     const tick = (time) => lenis.raf(time * 1000)
     gsap.ticker.add(tick)

@@ -12,16 +12,26 @@ import { signals } from '../scenes/signals'
 export default function Preloader() {
   const { progress, active } = useProgress()
   const [done, setDone] = useState(false)
+  const [minDone, setMinDone] = useState(false)
   const pct = Math.min(100, Math.round(progress))
 
-  // Reveal once loaders settle at 100% (brief hold for the brand beat).
+  // Minimum on-brand hold so the reveal never flashes by — and so it doesn't
+  // reveal before asset loading has even had a chance to start.
   useEffect(() => {
-    if (done) return
-    if (!active && progress >= 100) {
-      const t = setTimeout(() => setDone(true), 650)
+    const t = setTimeout(() => setMinDone(true), 1200)
+    return () => clearTimeout(t)
+  }, [])
+
+  // Reveal once the minimum hold has passed and nothing is actively loading.
+  // (Routes other than Home load no 3D assets, so we can't wait for 100% —
+  // we wait for the loader to be idle instead.)
+  useEffect(() => {
+    if (done || !minDone) return
+    if (!active) {
+      const t = setTimeout(() => setDone(true), 300)
       return () => clearTimeout(t)
     }
-  }, [active, progress, done])
+  }, [minDone, active, done])
 
   // Safety net — never trap the user behind a stalled asset.
   useEffect(() => {
