@@ -1,5 +1,5 @@
 export const WIND = { x: -1, y: -0.12 };              // right → left
-export const S_BASE = { x: 4.6, y: -0.45, z: -0.1 };  // "s" resting slot (your tuned value)
+export const S_BASE = { x: 4.15, y: -0.4, z: -0.1 };  // "s" resting slot (your tuned value)
 export const URPRISE_Y = -16;                          // how far below the reveal sits
 export const S_LAND = { x: -4.2, y: URPRISE_Y, z: 0 }; // where the "s" lands in "urprise"
 export const NAME_BASE_Y = -0.4;                       // resting Y of "The Resolute"

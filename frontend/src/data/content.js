@@ -132,7 +132,7 @@ export const TEAM = [
   },
   {
     name: 'Neeraj',
-    role: 'Developer',
+    role: 'Primary Developer — AI/ML + Full-Stack',
     blurb: 'Full-stack and design support across the studio’s projects.',
   },
 ]
