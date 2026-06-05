@@ -16,7 +16,7 @@ export default function Hero() {
     const st = ScrollTrigger.create({
       trigger: trackRef.current,
       start:   'top top',
-      end:     '+=3500',          // bigger = slower, more drawn-out storm
+      end:     '+=5500',          // bigger = slower, more drawn-out storm
       pin:     pinRef.current,
       scrub:   1,
       onUpdate: (self) => { progress.current = self.progress },
