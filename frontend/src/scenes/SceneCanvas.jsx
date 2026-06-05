@@ -1,5 +1,6 @@
-import { Suspense, lazy, useEffect } from 'react'
+import { Suspense, lazy, useEffect, useState } from 'react'
 import { Canvas } from '@react-three/fiber'
+import { PerformanceMonitor } from '@react-three/drei'
 import { EffectComposer, Bloom, Vignette } from '@react-three/postprocessing'
 import useIsMobile from '../hooks/useIsMobile'
 import WorldEnvironment from './WorldEnvironment'
@@ -35,27 +36,46 @@ function SceneManager({ route, mobile }) {
  * The single, persistent R3F canvas for the whole site. Fixed behind the DOM
  * and pointer-events:none, so the page stays fully interactive/selectable and
  * all 3D parallax is fed from the global pointer signal instead.
+ *
+ * Quality adapts to the hardware: PerformanceMonitor lowers DPR and weakens
+ * bloom when the frame rate drops, so weak laptops/phones stay smooth.
  */
 export default function SceneCanvas({ route }) {
   const mobile = useIsMobile()
+  const maxDpr = mobile ? 1.5 : 2
+  const [dpr, setDpr] = useState(maxDpr)
+  const [degraded, setDegraded] = useState(false)
+
   useEffect(() => { signals.isMobile = mobile }, [mobile])
+  useEffect(() => { signals.quality = degraded ? 0.5 : 1 }, [degraded])
 
   return (
     <Canvas
       style={{ position: 'fixed', inset: 0, zIndex: 0, pointerEvents: 'none' }}
-      dpr={[1, 2]}
+      dpr={dpr}
       camera={{ position: WAYPOINTS['/'].pos, fov: 42, near: 0.1, far: 200 }}
       gl={{ antialias: true, powerPreference: 'high-performance' }}
     >
       <color attach="background" args={['#05070E']} />
+
+      <PerformanceMonitor
+        onDecline={() => { setDpr(1); setDegraded(true) }}
+        onIncline={() => { setDpr(maxDpr); setDegraded(false) }}
+      />
+
       <WorldEnvironment mobile={mobile} />
       <CameraRig route={route} />
       <SceneManager route={route} mobile={mobile} />
 
       {/* The cinematic layer — makes the emissive text, particles and lightning glow. */}
       <EffectComposer>
-        <Bloom intensity={0.9} luminanceThreshold={0.25} luminanceSmoothing={0.9} mipmapBlur />
-        <Vignette offset={0.25} darkness={0.85} eskil={false} />
+        <Bloom
+          intensity={degraded ? 0.55 : 0.9}
+          luminanceThreshold={0.25}
+          luminanceSmoothing={0.9}
+          mipmapBlur={!degraded}
+        />
+        <Vignette offset={0.25} darkness={degraded ? 0.6 : 0.85} eskil={false} />
       </EffectComposer>
     </Canvas>
   )

@@ -500,7 +500,9 @@ body {
 .mobile-menu {
   position: fixed;
   inset: 0;
-  z-index: 1;
+  /* Below the nav bar (z-50) so the burger stays clickable to close it,
+     above page content + grain. */
+  z-index: 45;
   display: flex;
   align-items: center;
   justify-content: center;

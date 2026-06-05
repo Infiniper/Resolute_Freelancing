@@ -40,36 +40,40 @@ export default function Nav() {
   }, [open])
 
   return (
-    <header className="nav-root">
-      <Link to="/" className="nav-mark" aria-label="The Resolutes — home">
-        The Resolutes
-      </Link>
+    <>
+      <header className="nav-root">
+        <Link to="/" className="nav-mark" aria-label="The Resolutes — home">
+          The Resolutes
+        </Link>
 
-      <nav className="nav-links" aria-label="Primary">
-        {LINKS.map(([to, label]) => (
-          <NavLink
-            key={to}
-            to={to}
-            className={({ isActive }) => `nav-link${isActive ? ' is-active' : ''}`}
-          >
-            {label}
-          </NavLink>
-        ))}
-      </nav>
+        <nav className="nav-links" aria-label="Primary">
+          {LINKS.map(([to, label]) => (
+            <NavLink
+              key={to}
+              to={to}
+              className={({ isActive }) => `nav-link${isActive ? ' is-active' : ''}`}
+            >
+              {label}
+            </NavLink>
+          ))}
+        </nav>
 
-      <Link to="/contact" className="nav-cta nav-cta-desktop">Hire Us</Link>
+        <Link to="/contact" className="nav-cta nav-cta-desktop">Hire Us</Link>
 
-      <button
-        type="button"
-        className={`nav-burger${open ? ' is-open' : ''}`}
-        aria-label={open ? 'Close menu' : 'Open menu'}
-        aria-expanded={open}
-        onClick={() => setOpen((o) => !o)}
-      >
-        <span />
-        <span />
-      </button>
+        <button
+          type="button"
+          className={`nav-burger${open ? ' is-open' : ''}`}
+          aria-label={open ? 'Close menu' : 'Open menu'}
+          aria-expanded={open}
+          onClick={() => setOpen((o) => !o)}
+        >
+          <span />
+          <span />
+        </button>
+      </header>
 
+      {/* Rendered as a sibling of the header — the header's backdrop-filter would
+          otherwise make it the containing block for this fixed overlay. */}
       <AnimatePresence>
         {open && (
           <motion.div
@@ -99,6 +103,6 @@ export default function Nav() {
           </motion.div>
         )}
       </AnimatePresence>
-    </header>
+    </>
   )
 }
