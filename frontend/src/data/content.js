@@ -36,6 +36,9 @@ export const SERVICES = [
   },
 ]
 
+// Per project: `image` is the poster, `preview` an optional short muted clip
+// shown on hover (desktop) / in-view (mobile). Drop the files in /public/work/
+// (e.g. image: '/work/vindicate.jpg', preview: '/work/vindicate.mp4').
 export const PROJECTS = [
   {
     title: 'VINDICATE',
@@ -43,9 +46,10 @@ export const PROJECTS = [
       'Explainable-RL framework generating validity-insured counterfactual explanations (MiniGrid, NSGA-II). 80% efficacy / 92% plausibility.',
     note: 'Research, under review',
     stack: ['Python', 'Gymnasium', 'Stable-Baselines3'],
-    image: null, // TODO: add project image to /public and reference here
-    live: null,  // TODO: live/demo URL
-    repo: null,  // TODO: repository URL
+    image: null,   // TODO: '/work/vindicate.jpg'
+    preview: null, // TODO: '/work/vindicate.mp4' (optional)
+    live: null,    // TODO: live/demo URL
+    repo: null,    // TODO: repository URL
   },
   {
     title: 'Amazon Product Pricing',
@@ -53,9 +57,10 @@ export const PROJECTS = [
       'Multimodal price prediction over 75k products (S-BERT + CLIP + LightGBM, 5-fold CV, 50.85% SMAPE).',
     note: 'AIR 1122 · Amazon ML Challenge 2025',
     stack: ['Python', 'LightGBM', 'CLIP'],
-    image: null, // TODO
-    live: null,  // TODO
-    repo: null,  // TODO
+    image: null,   // TODO
+    preview: null, // TODO
+    live: null,    // TODO
+    repo: null,    // TODO
   },
   {
     title: 'Multilingual Hate-Speech Detection',
@@ -63,9 +68,10 @@ export const PROJECTS = [
       'Fine-tuned MuRIL for Hindi/English/Hinglish; Gradio app on Hugging Face Spaces (text, URLs, docs). 80% acc / 0.76 macro-F1.',
     note: 'Samsung Innovation Campus',
     stack: ['MuRIL', 'NLP', 'Gradio'],
-    image: null, // TODO
-    live: null,  // TODO: Hugging Face Space URL
-    repo: null,  // TODO
+    image: null,   // TODO
+    preview: null, // TODO
+    live: null,    // TODO: Hugging Face Space URL
+    repo: null,    // TODO
   },
   {
     title: 'Sanshi',
@@ -73,18 +79,20 @@ export const PROJECTS = [
       'Multi-brand e-commerce platform; search / filter / pagination, email notifications, deployed on Render + Supabase.',
     note: 'Full-stack product',
     stack: ['React', 'Node', 'Express', 'PostgreSQL'],
-    image: null, // TODO
-    live: null,  // TODO
-    repo: null,  // TODO
+    image: null,   // TODO
+    preview: null, // TODO
+    live: null,    // TODO
+    repo: null,    // TODO
   },
   {
     title: 'QuattroRealm',
     outcome: '2D strategy game built from scratch with OOP and a custom game loop.',
     note: 'Game dev',
     stack: ['C++', 'SFML'],
-    image: null, // TODO
-    live: null,  // TODO
-    repo: null,  // TODO
+    image: null,   // TODO
+    preview: null, // TODO
+    live: null,    // TODO
+    repo: null,    // TODO
   },
   // TODO: add 1–2 web-design client samples below as they're ready.
   {
@@ -93,6 +101,7 @@ export const PROJECTS = [
     note: 'Placeholder',
     stack: ['React', 'Design'],
     image: null,
+    preview: null,
     live: null,
     repo: null,
     placeholder: true,
@@ -103,6 +112,7 @@ export const PROJECTS = [
     note: 'Placeholder',
     stack: ['React', 'Design'],
     image: null,
+    preview: null,
     live: null,
     repo: null,
     placeholder: true,
@@ -154,17 +164,15 @@ export const TRUST_STRIP = [
 ]
 
 export const CONTACT = {
-  email: 'vishwajeetsingh1567@gmail.com',
-  // TODO: replace with real profile URLs
-  linkedin: null, // e.g. 'https://www.linkedin.com/in/...'
-  github: null,   // e.g. 'https://github.com/...'
-  leetcode: null, // e.g. 'https://leetcode.com/...'
+  email: 'perffinity360@gmail.com',
+  linkedin: 'https://www.linkedin.com/in/vishwajeet1567',
+  github: 'https://github.com/infiniper/',
+  leetcode: 'https://leetcode.com/u/infiniper/',
 }
 
 // EmailJS — see Contact page. Fill these in to enable real delivery.
-// TODO: create a free account at https://www.emailjs.com and paste the IDs.
 export const EMAILJS = {
-  serviceId: 'TODO_SERVICE_ID',
-  templateId: 'TODO_TEMPLATE_ID',
-  publicKey: 'TODO_PUBLIC_KEY',
+  serviceId: 'service_ibmilrn',    // Email Services page
+  templateId: 'template_4olzfcs',  // Email Templates page
+  publicKey: '37YpPIds6PlWsb9ia',  // Account → API Keys
 }
