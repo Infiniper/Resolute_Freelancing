@@ -19,7 +19,7 @@ export default function Work() {
 
         <div className="work-grid">
           {PROJECTS.map((p, i) => (
-            <Reveal key={`${p.title}-${i}`} delay={(i % 2) * 0.06}>
+            <Reveal key={`${p.title}-${i}`} delay={(i % 2) * 0.06} from={i % 2 ? 'right' : 'left'}>
               <article className={`glass-card project-card${p.placeholder ? ' is-placeholder' : ''}`}>
                 <div className="project-media" aria-hidden>
                   {/* TODO: drop a real screenshot into /public and render it here */}

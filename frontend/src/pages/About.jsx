@@ -38,7 +38,7 @@ export default function About() {
           <h2 id="team-h" className="section-title">The team</h2>
           <div className="team-grid">
             {TEAM.map((t, i) => (
-              <Reveal key={t.name} delay={i * 0.08}>
+              <Reveal key={t.name} delay={i * 0.08} from={i % 2 ? 'right' : 'left'}>
                 <article className="glass-card team-card">
                   <div className="team-avatar" aria-hidden>{initials(t.name)}</div>
                   <h3 className="team-name">{t.name}</h3>
