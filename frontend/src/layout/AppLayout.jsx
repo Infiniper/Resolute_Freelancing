@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { Suspense, lazy, useEffect } from 'react'
 import { Routes, Route, useLocation } from 'react-router-dom'
 import { AnimatePresence } from 'framer-motion'
 import useSmoothScroll from '../hooks/useSmoothScroll'
@@ -19,6 +19,11 @@ import Work from '../pages/Work'
 import Pricing from '../pages/Pricing'
 import About from '../pages/About'
 import Contact from '../pages/Contact'
+
+// Dev-only leva panel for tuning the "surprise!" seam. The dynamic import lives
+// inside the `import.meta.env.DEV` branch, so leva is dead-code-eliminated from
+// production builds entirely.
+const DevTuner = import.meta.env.DEV ? lazy(() => import('../components/DevTuner')) : null
 
 /**
  * The app shell: persistent Canvas behind, DOM pages in front, nav + footer
@@ -54,6 +59,7 @@ export default function AppLayout() {
   return (
     <>
       <a href="#main" className="skip-link">Skip to content</a>
+      {DevTuner && <Suspense fallback={null}><DevTuner /></Suspense>}
       <CustomCursor />
       {reduced ? <StaticBackdrop /> : <SceneCanvas route={location.pathname} />}
       {!reduced && <Preloader />}

@@ -40,7 +40,7 @@ export default function WindParticles({ count = 16, progress }) {
       if (p.x < -20) { p.x = 20; p.y = (Math.random() - 0.5) * 14; }
       dummy.position.set(p.x, p.y, p.z);
       dummy.rotation.set(p.rx, p.ry, p.rz);
-      dummy.scale.set(0.42, 0.55, 1);
+      dummy.scale.set(0.62, 0.8, 1);
       dummy.updateMatrix();
       meshRef.current.setMatrixAt(i, dummy.matrix);
     });

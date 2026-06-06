@@ -1,5 +1,6 @@
 import { useEffect, useRef } from 'react'
 import { Link } from 'react-router-dom'
+import { motion } from 'framer-motion'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import Seo from '../components/Seo'
@@ -32,19 +33,35 @@ function Payoff() {
 export default function Home() {
   const reduced = useReducedMotion()
   const trackRef = useRef(null)
+  const payoffRef = useRef(null)
 
-  // The fixed canvas plays the storm; scrolling this tall track drives it 0→1.
-  // Skipped entirely for reduced motion (there'd be no storm to scrub).
+  // The fixed canvas plays the storm; scrolling the tall track drives it 0→1.
+  // A second trigger on the payoff drives `homeReveal` 1→0 as it scrolls in, so
+  // the canvas can dissolve the 3D word and dolly the camera past it — the word
+  // and the payoff text are never on screen together. Skipped for reduced
+  // motion (there'd be no storm to scrub).
   useEffect(() => {
     if (reduced) return
-    const st = ScrollTrigger.create({
+    const storm = ScrollTrigger.create({
       trigger: trackRef.current,
       start: 'top top',
       end: 'bottom bottom',
       scrub: true,
       onUpdate: (self) => { signals.homeScroll = self.progress },
     })
-    return () => { signals.homeScroll = 0; st.kill() }
+    const revealST = ScrollTrigger.create({
+      trigger: payoffRef.current,
+      start: 'top bottom',
+      end: 'top top',
+      scrub: true,
+      onUpdate: (self) => { signals.homeReveal = 1 - self.progress },
+    })
+    return () => {
+      signals.homeScroll = 0
+      signals.homeReveal = 1
+      storm.kill()
+      revealST.kill()
+    }
   }, [reduced])
 
   // Reduced motion: one calm static screen with the same content, no long scrub.
@@ -78,10 +95,17 @@ export default function Home() {
         </div>
       </section>
 
-      {/* The calm after the storm — the payoff and the pitch. */}
-      <section className="home-payoff">
+      {/* The calm after the storm — the payoff rises in as the word dissolves. */}
+      <motion.section
+        ref={payoffRef}
+        className="home-payoff"
+        initial={{ opacity: 0, y: 48 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ amount: 0.4 }}
+        transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
+      >
         <Payoff />
-      </section>
+      </motion.section>
     </>
   )
 }

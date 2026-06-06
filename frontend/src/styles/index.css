@@ -379,8 +379,11 @@ body {
   text-align: center;
   gap: 1.5rem;
   padding: 6rem clamp(1.25rem, 5vw, 3rem);
-  /* Subtle dark halo so copy stays readable over the 3D "surprise!" behind it. */
-  background: radial-gradient(ellipse 70% 60% at 50% 50%, rgba(5, 7, 14, 0.7), transparent 75%);
+  /* Fully opaque dark base (a subtle blue glow on top) so the 3D word behind can
+     never bleed through the payoff — it has dissolved by now, this is the safety net. */
+  background:
+    radial-gradient(ellipse 80% 60% at 50% 38%, rgba(59, 130, 246, 0.1), transparent 70%),
+    #05070e;
 }
 .home-payoff .lead {
   max-width: 52ch;
