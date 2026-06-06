@@ -156,6 +156,19 @@ body {
   z-index: 1;
 }
 
+/* Interactive 3D: on precise-pointer devices the page content column stays
+   interactive, but the full-width transition wrapper + side gutters become
+   transparent to the pointer, so hovers/clicks over empty negative space fall
+   through to the canvas behind and hit the 3D objects. pointer-events inherits,
+   so re-enabling `.page` / `.home-payoff` covers all their cards, text and
+   links. Touch devices are untouched (the canvas is pointer-events:none there),
+   so page scroll is never blocked. */
+@media (hover: hover) and (pointer: fine) {
+  .site-main { pointer-events: none; }
+  .page,
+  .home-payoff { pointer-events: auto; }
+}
+
 /* Reduced-motion / no-canvas fallback backdrop */
 .static-backdrop {
   position: fixed;
@@ -493,6 +506,20 @@ body {
   font-size: 0.72rem;
   letter-spacing: 0.06em;
   color: var(--color-site-fore-faint);
+}
+.footer-credits {
+  max-width: 72rem;
+  margin: 0.9rem auto 0;
+  font-size: 0.68rem;
+  line-height: 1.5;
+  color: var(--color-site-fore-faint);
+}
+.footer-credits a {
+  color: var(--color-site-fore-dim);
+  text-decoration: none;
+}
+.footer-credits a:hover {
+  color: var(--color-site-accent-bright);
 }
 
 /* ═══════════════════════════════════════
