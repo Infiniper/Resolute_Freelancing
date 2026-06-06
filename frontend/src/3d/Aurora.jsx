@@ -1,4 +1,4 @@
-import { useMemo, useRef } from 'react'
+import { useEffect, useMemo, useRef } from 'react'
 import { useFrame } from '@react-three/fiber'
 import * as THREE from 'three'
 import { createNoise2D } from 'simplex-noise'
@@ -37,6 +37,8 @@ function makeAuroraTexture() {
 export default function Aurora({ position = [0, -12, -45], scale = [140, 44, 1] }) {
   const tex = useMemo(makeAuroraTexture, [])
   const matRef = useRef()
+
+  useEffect(() => () => tex.dispose(), [tex])
 
   useFrame((s) => {
     const t = s.clock.elapsedTime

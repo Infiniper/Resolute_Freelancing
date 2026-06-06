@@ -1,4 +1,4 @@
-import { useMemo } from 'react'
+import { useEffect, useMemo } from 'react'
 import * as THREE from 'three'
 
 // A soft, irregular cloud baked once into a canvas texture (overlapping radial
@@ -38,6 +38,9 @@ export default function Nebulae({ count = 5 }) {
     })),
     [count],
   )
+
+  // Free the baked textures if the set changes (e.g. mobile toggle) or unmounts.
+  useEffect(() => () => items.forEach((n) => n.tex.dispose()), [items])
 
   return items.map((n, i) => (
     <mesh key={i} position={n.pos} rotation={[0, 0, n.rot]}>

@@ -1,4 +1,4 @@
-import { useMemo } from 'react'
+import { useEffect, useMemo } from 'react'
 import * as THREE from 'three'
 import GLBModel from '../3d/GLBModel'
 import { MODELS } from '../3d/models'
@@ -15,6 +15,9 @@ function Constellation({ position }) {
     )
     return { points: pts, lineGeo }
   }, [])
+
+  // Dispose the hand-built line geometry when About unmounts.
+  useEffect(() => () => lineGeo.dispose(), [lineGeo])
 
   return (
     <group position={position}>

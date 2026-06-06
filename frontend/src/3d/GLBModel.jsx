@@ -1,4 +1,4 @@
-import { useMemo, useRef } from 'react'
+import { useEffect, useMemo, useRef } from 'react'
 import { useFrame } from '@react-three/fiber'
 import { useGLTF } from '@react-three/drei'
 import * as THREE from 'three'
@@ -28,19 +28,25 @@ export default function GLBModel({
   const { hovered, bind } = useHover3d()
 
   // Deep-clone the model and its materials (so emissive pings don't leak across
-  // instances/pages), and start it tiny for the intro. Collect glowable mats.
-  const { cloned, mats } = useMemo(() => {
+  // instances/pages), and start it tiny for the intro. `mats` are the glowable
+  // ones; `allMats` is every clone, for disposal on unmount.
+  const { cloned, mats, allMats } = useMemo(() => {
     const cloned = scene.clone(true)
     cloned.scale.setScalar(0.0001)
     const mats = []
+    const allMats = []
     cloned.traverse((o) => {
       if (!o.isMesh) return
       o.material = Array.isArray(o.material) ? o.material.map((m) => m.clone()) : o.material.clone()
       const list = Array.isArray(o.material) ? o.material : [o.material]
-      list.forEach((m) => { if ('emissiveIntensity' in m) mats.push(m) })
+      list.forEach((m) => { allMats.push(m); if ('emissiveIntensity' in m) mats.push(m) })
     })
-    return { cloned, mats }
+    return { cloned, mats, allMats }
   }, [scene])
+
+  // Dispose the cloned materials when the scene unmounts (on navigation). The
+  // geometry is shared with the cached GLTF, so we must NOT dispose that.
+  useEffect(() => () => { allMats.forEach((m) => m.dispose()) }, [allMats])
 
   useFrame((_, dt) => {
     const m = ref.current
