@@ -1,36 +1,20 @@
 import { Suspense } from 'react'
-import { Environment, Lightformer, Stars, useTexture } from '@react-three/drei'
-import * as THREE from 'three'
+import { Environment, Lightformer, Stars } from '@react-three/drei'
 import SpaceDebris from '../3d/SpaceDebris'
 import Nebulae from '../3d/Nebulae'
-import Constellations from '../3d/Constellations'
-import Aurora from '../3d/Aurora'
 import Traveler from '../3d/Traveler'
 
 // SpaceDebris reads `progress.current` to gust with the storm; the persistent
 // world keeps it calm and slow at all times.
 const calm = { current: 0 }
 
-// The owner supplied an equirectangular Milky-Way image — used as a very dim,
-// dark-tinted backdrop sphere (color multiplies the map down, fog fades it) so
-// it adds deep-space texture without ever reducing text contrast. Procedural
-// nebulae/stars do the heavy lifting; this is just extra richness.
-function MilkyWay() {
-  const tex = useTexture('/2k_stars_milky_way.jpg')
-  return (
-    <mesh scale={[-1, 1, 1]}>
-      <sphereGeometry args={[100, 40, 40]} />
-      <meshBasicMaterial map={tex} color="#2a3550" side={THREE.BackSide} transparent opacity={0.4} depthWrite={false} />
-    </mesh>
-  )
-}
-
 /**
  * The persistent backdrop shared by every route — a rich, layered deep space:
- * a dim Milky-Way backdrop, two star layers, drifting nebulae, twinkling
- * constellations, an aurora ribbon, slow debris, and a flying-saucer traveller
- * that flies between vantages. It never unmounts, so moving between pages feels
- * like one continuous flight. Counts drop on mobile.
+ * two star layers, soft off-center nebulae, slow debris, and a flying-saucer
+ * traveller that flies between vantages. It never unmounts, so moving between
+ * pages feels like one continuous flight. Counts drop on mobile. (No
+ * constellations / aurora / Milky-Way band — they read as flat shapes / slabs
+ * across the hero; nebulae + stars carry the depth instead.)
  */
 export default function WorldEnvironment({ mobile }) {
   return (
@@ -54,14 +38,10 @@ export default function WorldEnvironment({ mobile }) {
       <Stars radius={90} depth={40} count={mobile ? 200 : 500} factor={7} saturation={0} fade speed={0.4} />
 
       <Nebulae count={mobile ? 3 : 5} />
-      <Constellations count={mobile ? 2 : 4} />
-      <Aurora position={[0, -12, -45]} scale={[140, 44, 1]} />
-      {!mobile && <Aurora position={[12, 16, -55]} scale={[120, 36, 1]} />}
 
-      {/* Suspending assets (texture + GLB) — kept off the main world tree's
-          render path with their own boundary so they never blank the canvas. */}
+      {/* The traveller GLB suspends while it loads — given its own boundary so
+          it's kept off the main world tree's render path and never blanks the canvas. */}
       <Suspense fallback={null}>
-        <MilkyWay />
         <Traveler mobile={mobile} />
       </Suspense>
 

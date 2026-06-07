@@ -1,4 +1,4 @@
-import { useRef } from 'react'
+import { useCallback, useEffect, useRef } from 'react'
 import { useFrame } from '@react-three/fiber'
 import { Float } from '@react-three/drei'
 import useHover3d from './useHover3d'
@@ -20,6 +20,9 @@ export default function EnergyCore({
   const spin = useRef(0)
   const { hovered, bind } = useHover3d()
 
+  const poke = useCallback(() => { spin.current = 1.4 }, [])
+  useEffect(() => { if (coreRef.current) coreRef.current.userData.onTap = poke }, [poke])
+
   useFrame((_, dt) => {
     if (ringRef.current) ringRef.current.rotation.z += dt * (hovered ? 0.2 : 0.06)
     spin.current = Math.max(0, spin.current - dt)
@@ -39,7 +42,7 @@ export default function EnergyCore({
             </mesh>
           </group>
         )}
-        <mesh ref={coreRef} {...bind} onClick={(e) => { e.stopPropagation(); spin.current = 1.4 }}>
+        <mesh ref={coreRef} {...bind} onClick={(e) => { e.stopPropagation(); poke() }}>
           <icosahedronGeometry args={[radius, 1]} />
           <meshStandardMaterial
             color={color}

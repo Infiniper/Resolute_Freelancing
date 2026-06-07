@@ -1,7 +1,7 @@
 import { useRef, useMemo } from "react";
 import { useFrame } from "@react-three/fiber";
 import * as THREE from "three";
-import { WIND, stormIntensity } from "../data/stormConfig";
+import { WIND, stormIntensity, bandY } from "../data/stormConfig";
 
 function makeDocTexture() {
   const c = document.createElement("canvas");
@@ -20,11 +20,14 @@ export default function WindParticles({ count = 16, progress }) {
   const matRef = useRef();
   const dummy = useMemo(() => new THREE.Object3D(), []);
   const docTex = useMemo(makeDocTexture, []);
+  // Pages stream right→left in the clear bands above / below the wordmark
+  // (`baseY` from bandY) and always behind it in z, so they never cross the
+  // letters. `baseY` is reassigned to a band on each horizontal wrap.
   const seeds = useMemo(() => Array.from({ length: count }, () => ({
-    x: (Math.random() - 0.5) * 40, y: (Math.random() - 0.5) * 14, z: (Math.random() - 0.5) * 9,
+    x: (Math.random() - 0.5) * 40, baseY: bandY(), z: -4 - Math.random() * 8,
     rx: Math.random() * 6, ry: Math.random() * 6, rz: Math.random() * 6,
     spin: 0.6 + Math.random() * 2, drift: 0.6 + Math.random() * 1.2,
-    swirlAmp: 0.4 + Math.random() * 1.3, swirlFreq: 0.5 + Math.random() * 1.5, phase: Math.random() * 6,
+    swirlAmp: 0.3 + Math.random() * 0.7, swirlFreq: 0.5 + Math.random() * 1.5, phase: Math.random() * 6,
   })), [count]);
 
   useFrame((s) => {
@@ -33,12 +36,13 @@ export default function WindParticles({ count = 16, progress }) {
     const t = s.clock.elapsedTime;
     seeds.forEach((p, i) => {
       p.x += WIND.x * wind * p.drift * 0.016;
-      const swirl = p.swirlAmp * (0.3 + intensity);
-      p.y += (Math.sin(t * p.swirlFreq + p.phase) * swirl + WIND.y * wind * 0.5) * 0.016;
+      // Bounded vertical bob around the banded baseY (never accumulates into the
+      // keep-out), amplitude < the band gap even at storm peak.
+      const yy = p.baseY + Math.sin(t * p.swirlFreq + p.phase) * p.swirlAmp * (0.5 + intensity * 0.5);
       p.rx += p.spin * 0.016 * (0.5 + intensity * 4);
       p.rz += p.spin * 0.016 * (0.5 + intensity * 4);
-      if (p.x < -20) { p.x = 20; p.y = (Math.random() - 0.5) * 14; }
-      dummy.position.set(p.x, p.y, p.z);
+      if (p.x < -20) { p.x = 20; p.baseY = bandY(); }
+      dummy.position.set(p.x, yy, p.z);
       dummy.rotation.set(p.rx, p.ry, p.rz);
       dummy.scale.set(0.62, 0.8, 1);
       dummy.updateMatrix();
@@ -51,7 +55,7 @@ export default function WindParticles({ count = 16, progress }) {
   return (
     <instancedMesh ref={meshRef} args={[undefined, undefined, count]}>
       <planeGeometry args={[1, 1]} />
-      <meshStandardMaterial ref={matRef} color="#ffffff" map={docTex} side={THREE.DoubleSide} transparent opacity={0.6} />
+      <meshStandardMaterial ref={matRef} color="#ffffff" map={docTex} side={THREE.DoubleSide} transparent opacity={0.6} depthWrite={false} />
     </instancedMesh>
   );
 }

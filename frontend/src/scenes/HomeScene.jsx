@@ -11,6 +11,25 @@ import GlowParticles from '../3d/GlowParticles'
 import WindParticles from '../3d/WindParticles'
 import Asteroids from '../3d/Asteroids'
 import Lightning from '../3d/Lightning'
+import GLBModel from '../3d/GLBModel'
+import { MODELS } from '../3d/models'
+
+// A small comet streaking slowly across the upper background — kept well behind
+// the wordmark in z and above the letter band in y, so it never crosses the
+// title. OWNER: nudge `scale` / the y (6.6) / z (-9) if it reads too small.
+function HeroComet() {
+  const g = useRef()
+  useFrame((s) => {
+    if (!g.current) return
+    const t = s.clock.elapsedTime * 0.05
+    g.current.position.set(-18 + ((t * 9) % 40), 6.6 + Math.sin(t * 1.3) * 0.5, -9)
+  })
+  return (
+    <group ref={g}>
+      <GLBModel url={MODELS.comet} scale={0.6} spin={[0, 0.3, 0.4]} />
+    </group>
+  )
+}
 
 // Shared Text3D geometry options for the wordmark. Shallow extrusion + a small
 // letter gap so the letters read cleanly (the old deep, tight extrusion looked
@@ -23,11 +42,21 @@ const TEXT_OPTS = {
   letterSpacing: 0.03,
 }
 
-// The signature electric-blue emissive material, shared by every letter.
+// The signature electric-blue emissive material, shared by every letter. It
+// writes + tests depth and the meshes render last (renderOrder below), so the
+// solid wordmark always composites on top of the (additive, depth-write-off)
+// storm particles — nothing ever paints over the letters. It stays `transparent`
+// only so the dissolve can fade opacity; the storm particles all sit behind it
+// in z and out of the keep-out box, so depthTest never hides it.
 const MAT = {
   color: '#2f7fef', emissive: '#1e63d6', emissiveIntensity: 0.7,
   metalness: 0.6, roughness: 0.25, envMapIntensity: 1.2,
+  depthWrite: true, depthTest: true,
 }
+
+// Render the wordmark after every particle (which use renderOrder 0), so within
+// the transparent pass it draws last and on top.
+const WORDMARK_ORDER = 10
 
 // A live `progress.current` view onto the shared scroll signal — lets the
 // existing storm particle components keep their `progress` ref API unchanged.
@@ -135,7 +164,7 @@ export default function HomeScene({ mobile }) {
       {/* "The Resolute" — the "s" is a separate, animated mesh. */}
       <group ref={nameRef} position={[0, NAME_BASE_Y, 0]}>
         <Center>
-          <Text3D {...TEXT_OPTS}>
+          <Text3D {...TEXT_OPTS} renderOrder={WORDMARK_ORDER}>
             The Resolute
             <meshStandardMaterial ref={nameMatRef} transparent {...MAT} />
           </Text3D>
@@ -143,14 +172,14 @@ export default function HomeScene({ mobile }) {
       </group>
 
       {/* The breakaway "s". */}
-      <Text3D ref={sRef} position={[S_BASE.x, NAME_BASE_Y + S_BASE.y, S_BASE.z]} {...TEXT_OPTS}>
+      <Text3D ref={sRef} position={[S_BASE.x, NAME_BASE_Y + S_BASE.y, S_BASE.z]} {...TEXT_OPTS} renderOrder={WORDMARK_ORDER}>
         s
         <meshStandardMaterial transparent {...MAT} />
       </Text3D>
 
       {/* "urprise!" waiting below — the s lands at its left → "surprise!". */}
       <group ref={urpriseRef} position={[tune.urpriseX, URPRISE_Y, 0]}>
-        <Text3D {...TEXT_OPTS}>
+        <Text3D {...TEXT_OPTS} renderOrder={WORDMARK_ORDER}>
           urprise!
           <meshStandardMaterial ref={urpriseMatRef} transparent {...MAT} />
         </Text3D>
@@ -161,6 +190,7 @@ export default function HomeScene({ mobile }) {
       <WindParticles count={mobile ? 6 : 16} progress={liveProgress} />
       <Asteroids count={mobile ? 3 : 5} progress={liveProgress} />
       <Lightning progress={liveProgress} />
+      {!mobile && <HeroComet />}
 
       <HomeDirector
         sceneRef={sceneRef} nameRef={nameRef} sRef={sRef} ambientRef={ambientRef}

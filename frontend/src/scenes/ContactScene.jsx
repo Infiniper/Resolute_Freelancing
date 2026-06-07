@@ -6,8 +6,9 @@ import { MODELS } from '../3d/models'
 
 /**
  * Contact = the calm after the storm: the halo ring + glowing core (the
- * established visual language), moved into the right-hand gap so it no longer
- * crosses the form inputs, with the ISS slowly orbiting it.
+ * established visual language), tucked into the right-hand gap so it never
+ * crosses the form inputs, with a small comet drifting slowly around it. Both
+ * react to hover/click/tap.
  */
 export default function ContactScene({ mobile }) {
   const orbit = useRef()
@@ -19,7 +20,7 @@ export default function ContactScene({ mobile }) {
     <group position={mobile ? [0, -5.5, -6] : [6.5, -0.3, -2]} scale={mobile ? 0.6 : 1}>
       <EnergyCore ring radius={0.75} ringRadius={2.7} />
       <group ref={orbit}>
-        <GLBModel url={MODELS.iss} position={[r, 0.4, 0]} scale={mobile ? 0.25 : 0.45} spin={[0, 0.4, 0]} />
+        <GLBModel url={MODELS.comet} position={[r, 0.4, 0]} scale={mobile ? 0.22 : 0.34} spin={[0, 0.5, 0.3]} />
       </group>
     </group>
   )

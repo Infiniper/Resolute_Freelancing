@@ -22,32 +22,49 @@ Scripts: `npm run dev` · `npm run build` · `npm run preview` · `npm run lint`
 
 - **One persistent R3F `<Canvas>`** at the app root (`src/layout/AppLayout.jsx`),
   fixed behind the DOM. On desktop (fine pointer) the canvas is
-  `pointer-events: auto` and `.site-main` is made `pointer-events: none` (with
-  `.page` / `.home-payoff` re-enabled), so hovers/clicks over the page's empty
-  negative space fall through to the interactive 3D objects, while cards/text
-  stay interactive. On touch the canvas is `pointer-events: none` so scrolling is
-  never captured. Idle parallax is still fed from a global pointer signal.
+  `pointer-events: auto` and `.site-main` is `pointer-events: none`, with **only
+  the real content re-enabled** (cards/`.glass-card`, headings, controls, links —
+  **not** the structural wrappers like `.page` / grids / sections). That's the
+  key: re-enabling the whole `.page` column (as an earlier pass did) captured the
+  empty negative space *inside* it, so the 3D objects never got hovers/clicks —
+  re-enabling only the content leaves that empty space transparent, so events fall
+  through to the interactive 3D objects while cards/text stay usable. On touch the
+  canvas is `pointer-events: none` (scroll is never captured); **taps reach 3D via
+  a window-level tap detector → `signals.tap*` → `TapRaycaster` inside the canvas**
+  (see below). Idle parallax + tap NDC are fed from global pointer signals.
 - **`src/scenes/SceneCanvas.jsx`** — the single canvas: adaptive DPR/quality via
   `PerformanceMonitor`, Bloom + Vignette, and per-route focal scenes lazy-loaded
   from the `SCENES` map. The canvas is `aria-hidden`.
 - **`src/scenes/signals.js`** — mutable singleton bridging the DOM tree and the
   canvas (separate React reconcilers; context can't cross `<Canvas>`). DOM writes
   `route`, `homeScroll`, `homeReveal`, `heroScale`, `quality`, `reducedMotion`,
-  `isMobile`, `pointer`, `lenis`; `useFrame` reads them. Writes are plain
-  assignments (no re-render).
+  `isMobile`, `pointer`, `pointerSmooth` (CameraRig-lerped), `tapSeq`/`tapX`/`tapY`
+  (touch taps), `lenis`; `useFrame` reads them. Writes are plain assignments (no
+  re-render).
+- **Pointer → 3D reactions.** Every interactive object exposes a `poke()` (the
+  shared click/tap reaction) and registers it on its root mesh as
+  `userData.onTap`. Desktop click/hover go through R3F events (`useHover3d` +
+  `onClick`); touch taps go through `TapRaycaster` (in `SceneCanvas`), which on a
+  new `signals.tapSeq` raycasts the scene and calls the first hit's
+  `userData.onTap` (walking up to the interactive root; instanced fields read
+  `instanceId`).
 - **`src/scenes/waypoints.js`** — per-route camera `pos`/`look`; `CameraRig`
   flies between them so routes read as one continuous flight through space. Each
   route's scene group is anchored at its `look` point (`SceneManager`).
 - **3D object kit** (`src/3d/`): `Planet`, `RingedPlanet`, `EnergyCore`,
   `Crystals` (procedural) and `GLBModel` (loads/clones a Poly Pizza model, tumbles
-  it, scale-in intro, hover/click emissive ping). `useHover3d` centralises hover
-  state and dispatches the `cursor3d` event that grows the DOM `CustomCursor`.
-  Each focal scene places 1–2 of these in negative space, **behind the cards in
-  z** (the glass cards occlude anything behind them — the real overlap risk is
-  only over the transparent header text / inter-card gaps, so keep objects to the
-  right/edges, never top-left). `Nebulae`, `Constellations`, `Aurora` and
-  `Traveler` (a flying saucer that eases toward each route's vantage) live in the
-  persistent `WorldEnvironment`.
+  it, scale-in intro, hover scale-up + `poke()` = emissive ping + a randomised
+  spin shove). `useHover3d` centralises hover state and dispatches the `cursor3d`
+  event that grows the DOM `CustomCursor`. **All 8 GLB models are used**
+  (asteroid → Home field; comet → Home + Contact; saucer → world `Traveler`;
+  satellite → Services; planet → Pricing; astronaut + iss → About; spaceship →
+  Work). Each focal scene places 1–2 in negative space, **behind the cards in z**
+  and small/edge-placed (keep objects to the right/edges/corners, never top-left;
+  per-scene positions/scales are flagged `OWNER:` for a browser nudge). `Nebulae`
+  (soft, off-center, far back) and `Traveler` (a flying saucer that eases toward
+  each route's vantage and reacts to hover/tap) live in the persistent
+  `WorldEnvironment`. **No constellations / aurora** — they read as flat
+  shapes/slabs across the hero; nebulae + stars carry the depth.
 - **Routing** — six routes (`/`, `/services`, `/work`, `/pricing`, `/about`,
   `/contact`) in `AppLayout`, `*` falls back to Home. Transitions via
   `<AnimatePresence mode="wait">` + `PageTransition` keyed on `location.pathname`,
@@ -86,6 +103,14 @@ Scripts: `npm run dev` · `npm run build` · `npm run preview` · `npm run lint`
   geometries and cloned materials on unmount (shared GLTF geometry is **not**
   disposed — it's cached by `useGLTF`). Keep counts low and bloom modest — fewer,
   well-placed objects over clutter.
+- **Hero draw-order (don't regress).** The wordmark meshes render last
+  (`renderOrder` 10) with `depthWrite`/`depthTest` on, so the solid letters always
+  composite on top of the (additive, `depthWrite:false`) storm particles — nothing
+  paints over the text. Every hero particle also stays **behind** the wordmark in
+  z and out of the **keep-out box** (`HERO_KEEPOUT` + `bandY()` in
+  `stormConfig.js`): glow/pages/asteroids fly in the bands above/below the letters
+  (never across), lightning strikes to the sides. Keep new hero particles behind +
+  banded.
 - The ~1.1MB three + R3F chunk is **inherent** to a 3D app — it's cached, sits
   behind the preloader, and runtime FPS is governed by adaptive DPR/quality, not
   bundle size. `chunkSizeWarningLimit` is raised to `1200` in `vite.config.js`
@@ -100,10 +125,14 @@ Scripts: `npm run dev` · `npm run build` · `npm run preview` · `npm run lint`
 - **Model credits** — `MODEL_CREDITS` in `src/3d/models.js` has `author: 'TODO'`
   for each Poly Pizza model (CC-BY requires real author names; shown in `Footer`).
 - **Object tuning** (visual, needs a browser): per-scene object positions/scales
-  in `src/scenes/*Scene.jsx`, and the `s` seam via the dev leva panel → bake into
-  `stormConfig.js` / `tune.js`.
-- Done by the owner: `EMAILJS` keys + `CONTACT` social URLs are filled in;
-  `/public/2k_stars_milky_way.jpg` is wired as the dim Milky-Way backdrop.
+  in `src/scenes/*Scene.jsx` (search `OWNER:` — esp. the **Pricing `Planet.glb`
+  scale** and **Home comet** scale, whose native sizes are unknown to me, plus
+  the Services satellite + About astronaut/iss offsets), and the `s` seam via the
+  dev leva panel → bake into `stormConfig.js` / `tune.js`.
+- Done by the owner: `EMAILJS` keys + `CONTACT` social URLs are filled in, **and
+  the WhatsApp/phone numbers** (`CONTACT.phones`); `/public/2k_stars_milky_way.jpg`
+  is wired as the dim Milky-Way backdrop. (Still add a `{{phone}}` field to the
+  EmailJS template so the form's optional phone comes through.)
 
 ## Phase status
 
@@ -127,10 +156,34 @@ Scripts: `npm run dev` · `npm run build` · `npm run preview` · `npm run lint`
 - **R4** — directional page transitions + choreographed side-slide reveals. ✅
 - **R5** — tighter layouts that fit 100vh + Work poster/hover-video media. ✅
 - **R6** — disposal, removed `ScenePlaceholder`, this doc, final QA. ✅
+- **R7** — browser-QA fixes + two features (per-fix commits): ✅
+  - Removed `Constellations` + `Aurora` (read as broken shapes / a slab); nebulae
+    pushed off-center.
+  - **Hero draw-order**: wordmark `renderOrder`/depth + `HERO_KEEPOUT`/`bandY`
+    keep-out so storm particles never cross/paint over the letters.
+  - **All 8 models** used, scaled down into true negative space; Services
+    satellite de-sprawled.
+  - **Interactivity fixed**: fine-grained pointer-events re-enable (empty space
+    falls through) + `TapRaycaster` for touch + `poke()` reactions on every
+    object (incl. the saucer).
+  - **Camera parallax** stronger + a look-offset (turns toward the cursor),
+    smoothed via `pointerSmooth`, on home + every route.
+  - Explicit **Home** tab in the nav.
+  - **Asteroid shatter** (click/tap → 3–5 fragments + spark burst + subtle
+    `sfx.js` crack; capped pools; field replenishes).
+  - **Contact**: optional phone/WhatsApp field, "Message us on WhatsApp" (wa.me,
+    prefilled), direct numbers with `wa.me`/`tel:` — numbers in `CONTACT.phones`.
 
 ## Gotchas / notes
 
 - Running on Windows; git warns about LF→CRLF — harmless.
+- **One deliberate off-palette colour**: the Contact "Message us on WhatsApp"
+  button + WhatsApp icons use WhatsApp green (`#25d366`) for recognizability —
+  the single intentional step off the one-blue accent.
+- **Interactivity depends on placement**: an object only reacts where the pointer
+  can reach it — i.e. over genuinely empty space (not behind a `.glass-card`,
+  which is pointer-enabled). If a model "doesn't react", it's likely rendering
+  over a card; move it to the edge/gutter, don't touch the pointer-events rules.
 - **Model files**: three Poly Pizza downloads had spaces / `%`-escapes in their
   names (fragile to load) and were renamed to `flying-saucer.glb`, `iss.glb`,
   `spaceship.glb`. Paths live in `src/3d/models.js`. The `.glb` assets are

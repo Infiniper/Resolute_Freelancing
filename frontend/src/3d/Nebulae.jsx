@@ -28,14 +28,21 @@ const TINTS = [[59, 130, 246], [99, 102, 241], [20, 184, 166], [139, 92, 246], [
  * placement so they add colour and depth without ever competing with the text.
  */
 export default function Nebulae({ count = 5 }) {
+  // Pushed off-center (never dead-ahead behind the hero) and far back, so each
+  // reads as a soft drifting blob in the periphery — not a flat sheet across the
+  // view. Sign-flipped x/y guarantees a clear central gap.
   const items = useMemo(
-    () => Array.from({ length: count }, (_, i) => ({
-      tex: makeNebulaTexture(TINTS[i % TINTS.length]),
-      pos: [(Math.random() - 0.5) * 120, (Math.random() - 0.5) * 70, -30 - Math.random() * 50],
-      rot: (Math.random() - 0.5) * 0.6,
-      size: 34 + Math.random() * 44,
-      op: 0.1 + Math.random() * 0.14,
-    })),
+    () => Array.from({ length: count }, (_, i) => {
+      const sx = Math.random() < 0.5 ? -1 : 1
+      const sy = Math.random() < 0.5 ? -1 : 1
+      return {
+        tex: makeNebulaTexture(TINTS[i % TINTS.length]),
+        pos: [sx * (32 + Math.random() * 46), sy * (16 + Math.random() * 26), -42 - Math.random() * 46],
+        rot: (Math.random() - 0.5) * 0.6,
+        size: 30 + Math.random() * 38,
+        op: 0.1 + Math.random() * 0.13,
+      }
+    }),
     [count],
   )
 

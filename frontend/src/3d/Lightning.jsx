@@ -16,10 +16,12 @@ export default function Lightning({ progress }) {
 
   const strike = () => {
     const pos = bolt.geometry.attributes.position
-    let cx = (Math.random() - 0.5) * 26
+    // Strike to one side of the wordmark (never straight down its centre) and
+    // behind it in z, so a bolt never streaks across the letters.
+    let cx = (Math.random() < 0.5 ? -1 : 1) * (6 + Math.random() * 8)
     let cy = 9
     for (let i = 0; i < 50; i++) {
-      pos.setXYZ(i, cx, cy, (Math.random() - 0.5) * 5)
+      pos.setXYZ(i, cx, cy, -5 - Math.random() * 5)
       cx += (Math.random() - 0.5) * 2.4   // horizontal jitter = jagged
       cy -= 18 / 50
     }

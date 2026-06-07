@@ -27,12 +27,17 @@ function resolveTarget(route, outPos, outLook) {
     const e = easeInOut(fly)
     const shake = peak * 0.22 * (1 - fly)
     const past = 1 - reveal   // 0 at rest → 1 once the payoff has fully revealed
+    // Parallax: the camera both shifts and *turns* toward the cursor (the look
+    // offset gives real rotational depth, not just a slide). Strongest at rest,
+    // fades out as the storm peaks/the word dissolves (reveal → 0).
+    const px = signals.pointerSmooth.x
+    const py = signals.pointerSmooth.y
     outPos.set(
-      (Math.random() - 0.5) * shake + signals.pointer.x * 0.5 * reveal,
-      lerp(0.6, URPRISE_Y * sc + 0.6, e) + (Math.random() - 0.5) * shake + signals.pointer.y * 0.3 * reveal + past * 3,
+      (Math.random() - 0.5) * shake + px * 1.2 * reveal,
+      lerp(0.6, URPRISE_Y * sc + 0.6, e) + (Math.random() - 0.5) * shake + py * 0.8 * reveal + past * 3,
       lerp(14, 8, past) // dolly forward into open space as the word dissolves
     )
-    outLook.set(0, lerp(0, URPRISE_Y * sc, e) + past * 3, 0)
+    outLook.set(px * 0.5 * reveal, lerp(0, URPRISE_Y * sc, e) + py * 0.32 * reveal + past * 3, 0)
     return
   }
   const wp = WAYPOINTS[route] || fallbackWaypoint
@@ -77,6 +82,12 @@ export default function CameraRig({ route }) {
   }, [route, camera])
 
   useFrame(() => {
+    // Smooth the raw pointer once, here (the single camera owner), so every
+    // parallax term below stays jitter-free and comfortable.
+    const sp = signals.pointerSmooth
+    sp.x = lerp(sp.x, signals.pointer.x, 0.06)
+    sp.y = lerp(sp.y, signals.pointer.y, 0.06)
+
     resolveTarget(route, _toPos, _toLook)
 
     if (transitioning.current) {
@@ -86,11 +97,14 @@ export default function CameraRig({ route }) {
     } else {
       _pos.copy(_toPos)
       _look.copy(_toLook)
-      // Idle parallax on the static (non-home) vantages — weighty but smooth
-      // (lerped into the pose below). ~2× the original for a livelier feel.
+      // Idle parallax on the static (non-home) vantages — the camera slides
+      // toward the cursor *and* turns to face it (the look offset adds real
+      // depth, like peering around the scene). Smooth via the lerped pointer.
       if (route !== '/') {
-        _pos.x += signals.pointer.x * 1.3
-        _pos.y += signals.pointer.y * 0.9
+        _pos.x += sp.x * 2.0
+        _pos.y += sp.y * 1.4
+        _look.x += sp.x * 0.7
+        _look.y += sp.y * 0.45
       }
     }
 
