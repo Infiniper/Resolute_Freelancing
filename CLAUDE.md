@@ -108,9 +108,11 @@ Scripts: `npm run dev` · `npm run build` · `npm run preview` · `npm run lint`
   composite on top of the (additive, `depthWrite:false`) storm particles — nothing
   paints over the text. Every hero particle also stays **behind** the wordmark in
   z and out of the **keep-out box** (`HERO_KEEPOUT` + `bandY()` in
-  `stormConfig.js`): glow/pages/asteroids fly in the bands above/below the letters
+  `stormConfig.js`): pages/asteroids fly in the bands above/below the letters
   (never across), lightning strikes to the sides. Keep new hero particles behind +
-  banded.
+  banded — and **don't add a wide additive dust field**: Bloom smears it into a
+  translucent band across the whole hero (this is why `GlowParticles` was removed;
+  see R8).
 - The ~1.1MB three + R3F chunk is **inherent** to a 3D app — it's cached, sits
   behind the preloader, and runtime FPS is governed by adaptive DPR/quality, not
   bundle size. `chunkSizeWarningLimit` is raised to `1200` in `vite.config.js`
@@ -173,6 +175,13 @@ Scripts: `npm run dev` · `npm run build` · `npm run preview` · `npm run lint`
     `sfx.js` crack; capped pools; field replenishes).
   - **Contact**: optional phone/WhatsApp field, "Message us on WhatsApp" (wa.me,
     prefilled), direct numbers with `wa.me`/`tel:` — numbers in `CONTACT.phones`.
+- **R8** — removed the hero's `GlowParticles` dust field (`HomeScene.jsx`): the
+  Bloom pass smeared its additive glow sprites into a translucent light-blue band
+  across the whole hero. The band **was the particles** — not a plane / nebula /
+  the Milky-Way backdrop (all ruled out first; the Milky-Way sphere is still
+  wired and stays). Deleting the field kills the band; the wordmark, storm pages,
+  asteroids, lightning + comet still carry the storm. `src/3d/GlowParticles.jsx`
+  remains in the tree but is now unused (left in place, not deleted). ✅
 
 ## Gotchas / notes
 
