@@ -20,7 +20,7 @@ export default function ServicesScene({ mobile }) {
       <GLBModel
         url={MODELS.satellite}
         position={mobile ? [1.4, -2.4, 0.5] : [2.6, -2.6, 0.5]}
-        scale={mobile ? 0.18 : 0.3}
+        scale={mobile ? 0.15 : 0.24}
         spin={[0.1, 0.4, 0.05]}
       />
       {!mobile && <Crystals position={[-15.5, -2, -2]} count={3} />}
