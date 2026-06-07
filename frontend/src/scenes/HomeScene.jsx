@@ -7,7 +7,6 @@ import {
   lerp, range, easeInOut, stormIntensity, clamp01,
   S_BASE, S_LAND, URPRISE_Y, NAME_BASE_Y,
 } from '../data/stormConfig'
-import GlowParticles from '../3d/GlowParticles'
 import WindParticles from '../3d/WindParticles'
 import Asteroids from '../3d/Asteroids'
 import Lightning from '../3d/Lightning'
@@ -185,8 +184,9 @@ export default function HomeScene({ mobile }) {
         </Text3D>
       </group>
 
-      {/* Storm */}
-      <GlowParticles count={mobile ? 200 : 600} progress={liveProgress} />
+      {/* Storm — no GlowParticles dust field: the Bloom pass smeared its additive
+          glow sprites into a continuous translucent band across the hero. The
+          wordmark, pages, asteroids, lightning + comet carry the storm instead. */}
       <WindParticles count={mobile ? 6 : 16} progress={liveProgress} />
       <Asteroids count={mobile ? 3 : 5} progress={liveProgress} />
       <Lightning progress={liveProgress} />
