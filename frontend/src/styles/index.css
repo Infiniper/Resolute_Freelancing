@@ -1104,11 +1104,39 @@ body {
   font-size: 0.74rem;
   color: #f87171;
 }
-.contact-form .btn-primary {
-  align-self: flex-start;
-}
 .contact-form .btn-primary:disabled {
   opacity: 0.6;
+}
+.form-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  align-items: center;
+}
+/* WhatsApp green — a deliberate, recognizable CTA colour next to the blue
+   "Send message" primary (the one place we step off the single-blue accent). */
+.btn-whatsapp {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.9rem 1.4rem;
+  font: inherit;
+  font-weight: 600;
+  font-size: 0.95rem;
+  border: 0;
+  border-radius: 0.55rem;
+  color: #fff;
+  background: #25d366;
+  box-shadow: 0 0 22px rgba(37, 211, 102, 0.35);
+  transition: background 0.25s ease, box-shadow 0.25s ease, transform 0.25s ease;
+}
+.btn-whatsapp:hover {
+  background: #1ebe5b;
+  box-shadow: 0 0 34px rgba(37, 211, 102, 0.5);
+  transform: translateY(-2px);
+}
+.btn-whatsapp svg {
+  flex: none;
 }
 .form-status {
   min-height: 1.2rem;
@@ -1139,6 +1167,48 @@ body {
   color: var(--color-site-accent-bright);
   text-decoration: none;
   word-break: break-all;
+}
+.contact-channels {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+.contact-channel {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+.contact-wa {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--color-site-fore);
+  text-decoration: none;
+  font-size: 0.92rem;
+}
+.contact-wa svg {
+  color: #25d366;
+  flex: none;
+}
+.contact-wa:hover {
+  color: #25d366;
+}
+.contact-tel {
+  font-size: 0.74rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--color-site-accent-bright);
+  text-decoration: none;
+  border: 1px solid rgba(59, 130, 246, 0.35);
+  border-radius: 999px;
+  padding: 0.25rem 0.7rem;
+  white-space: nowrap;
+}
+.contact-tel:hover {
+  color: #fff;
+  background: var(--color-site-accent);
 }
 .contact-socials {
   list-style: none;

@@ -168,9 +168,18 @@ export const CONTACT = {
   linkedin: 'https://www.linkedin.com/in/vishwajeet1567',
   github: 'https://github.com/infiniper/',
   leetcode: 'https://leetcode.com/u/infiniper/',
+  // Phone / WhatsApp — both reachable. `label` is for display, `tel` keeps the
+  // +country format for tel: links, `wa` is digits-only for wa.me click-to-chat.
+  // The first entry is the team number the contact-form WhatsApp button uses.
+  phones: [
+    { label: '+91 91404 00064', tel: '+919140400064', wa: '919140400064' },
+    { label: '+91 63864 44659', tel: '+916386444659', wa: '916386444659' },
+  ],
 }
 
 // EmailJS — see Contact page. Fill these in to enable real delivery.
+// NOTE: add a `{{phone}}` field to the EmailJS template so the optional
+// Phone / WhatsApp number from the form comes through.
 export const EMAILJS = {
   serviceId: 'service_ibmilrn',    // Email Services page
   templateId: 'template_4olzfcs',  // Email Templates page
