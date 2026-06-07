@@ -18,17 +18,21 @@ function resolveTarget(route, outPos, outLook) {
     // Storm choreography: as the user scrolls, pan straight down from the
     // title to "surprise!", tracking the falling "s". Same math as the
     // original Director so the camera and the "s" stay locked together.
+    // `heroScale` matches HomeScene's fit-to-viewport scaling of the wordmark.
     const p = signals.homeScroll
+    const reveal = signals.homeReveal
+    const sc = signals.heroScale
     const peak = range(p, 0.35, 0.55)
     const fly = range(p, 0.55, 1.0)
     const e = easeInOut(fly)
     const shake = peak * 0.22 * (1 - fly)
+    const past = 1 - reveal   // 0 at rest → 1 once the payoff has fully revealed
     outPos.set(
-      (Math.random() - 0.5) * shake,
-      lerp(0.6, URPRISE_Y + 0.6, e) + (Math.random() - 0.5) * shake,
-      14
+      (Math.random() - 0.5) * shake + signals.pointer.x * 0.5 * reveal,
+      lerp(0.6, URPRISE_Y * sc + 0.6, e) + (Math.random() - 0.5) * shake + signals.pointer.y * 0.3 * reveal + past * 3,
+      lerp(14, 8, past) // dolly forward into open space as the word dissolves
     )
-    outLook.set(0, lerp(0, URPRISE_Y, e), 0)
+    outLook.set(0, lerp(0, URPRISE_Y * sc, e) + past * 3, 0)
     return
   }
   const wp = WAYPOINTS[route] || fallbackWaypoint
@@ -82,10 +86,11 @@ export default function CameraRig({ route }) {
     } else {
       _pos.copy(_toPos)
       _look.copy(_toLook)
-      // Gentle idle parallax on the static (non-home) vantages.
+      // Idle parallax on the static (non-home) vantages — weighty but smooth
+      // (lerped into the pose below). ~2× the original for a livelier feel.
       if (route !== '/') {
-        _pos.x += signals.pointer.x * 0.6
-        _pos.y += signals.pointer.y * 0.4
+        _pos.x += signals.pointer.x * 1.3
+        _pos.y += signals.pointer.y * 0.9
       }
     }
 

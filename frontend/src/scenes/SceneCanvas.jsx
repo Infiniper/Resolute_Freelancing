@@ -52,7 +52,11 @@ export default function SceneCanvas({ route }) {
   return (
     <Canvas
       aria-hidden="true"
-      style={{ position: 'fixed', inset: 0, zIndex: 0, pointerEvents: 'none' }}
+      // Desktop: pointer-events on, so hovers/clicks over the page's empty
+      // negative space fall through `.site-main` (set pointer-events:none for
+      // fine pointers in CSS) and reach the interactive 3D objects. Mobile:
+      // off, so touch-scroll is never captured by the canvas.
+      style={{ position: 'fixed', inset: 0, zIndex: 0, pointerEvents: mobile ? 'none' : 'auto' }}
       dpr={dpr}
       camera={{ position: WAYPOINTS['/'].pos, fov: 42, near: 0.1, far: 200 }}
       gl={{ antialias: true, powerPreference: 'high-performance' }}

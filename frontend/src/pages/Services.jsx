@@ -21,7 +21,7 @@ export default function Services() {
 
         <ul className="card-grid" aria-label="Services offered">
           {SERVICES.map((s, i) => (
-            <Reveal key={s.title} as="li" delay={(i % 3) * 0.06}>
+            <Reveal key={s.title} as="li" delay={(i % 3) * 0.06} from={i % 2 ? 'right' : 'left'}>
               <TiltCard className="glass-card service-card">
                 <div className="service-card-top">
                   <h2 className="card-title">{s.title}</h2>

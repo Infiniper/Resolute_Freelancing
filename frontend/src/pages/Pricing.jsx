@@ -42,7 +42,7 @@ export default function Pricing() {
           </button>
         </div>
 
-        <Reveal className="glass-card pricing-table">
+        <Reveal className="glass-card pricing-table" from="left">
           <ul>
             {PRICING.map((row) => {
               const value = market === 'local' ? row.local : row.intl

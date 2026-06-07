@@ -1,6 +1,7 @@
 import Seo from '../components/Seo'
 import PageHeader from '../components/PageHeader'
 import Reveal from '../components/Reveal'
+import ProjectMedia from '../components/ProjectMedia'
 import { PROJECTS } from '../data/content'
 
 export default function Work() {
@@ -19,12 +20,9 @@ export default function Work() {
 
         <div className="work-grid">
           {PROJECTS.map((p, i) => (
-            <Reveal key={`${p.title}-${i}`} delay={(i % 2) * 0.06}>
+            <Reveal key={`${p.title}-${i}`} delay={(i % 2) * 0.06} from={i % 2 ? 'right' : 'left'}>
               <article className={`glass-card project-card${p.placeholder ? ' is-placeholder' : ''}`}>
-                <div className="project-media" aria-hidden>
-                  {/* TODO: drop a real screenshot into /public and render it here */}
-                  <span>{p.placeholder ? 'Sample slot' : 'Image — TODO'}</span>
-                </div>
+                <ProjectMedia image={p.image} preview={p.preview} title={p.title} placeholder={p.placeholder} />
                 <div className="project-body">
                   <div className="project-head">
                     <h2 className="card-title">{p.title}</h2>

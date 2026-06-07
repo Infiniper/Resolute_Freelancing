@@ -1,6 +1,7 @@
-import { useEffect } from 'react'
+import { Suspense, lazy, useEffect, useState } from 'react'
 import { Routes, Route, useLocation } from 'react-router-dom'
 import { AnimatePresence } from 'framer-motion'
+import { ROUTES } from '../scenes/waypoints'
 import useSmoothScroll from '../hooks/useSmoothScroll'
 import useReducedMotion from '../hooks/useReducedMotion'
 import CustomCursor from '../components/CustomCursor'
@@ -20,6 +21,11 @@ import Pricing from '../pages/Pricing'
 import About from '../pages/About'
 import Contact from '../pages/Contact'
 
+// Dev-only leva panel for tuning the "surprise!" seam. The dynamic import lives
+// inside the `import.meta.env.DEV` branch, so leva is dead-code-eliminated from
+// production builds entirely.
+const DevTuner = import.meta.env.DEV ? lazy(() => import('../components/DevTuner')) : null
+
 /**
  * The app shell: persistent Canvas behind, DOM pages in front, nav + footer
  * around them. Keeps the shared `signals` in sync with React state so the
@@ -29,6 +35,19 @@ export default function AppLayout() {
   useSmoothScroll()
   const location = useLocation()
   const reduced = useReducedMotion()
+
+  // Direction of travel (+1 forward / -1 back) from the route order, so page
+  // transitions slide the right way. Derived by adjusting state during render
+  // (React's recommended pattern — also what Nav uses) so it's ready before the
+  // animation, without reading refs during render.
+  const [prevPath, setPrevPath] = useState(location.pathname)
+  const [direction, setDirection] = useState(1)
+  if (prevPath !== location.pathname) {
+    const a = ROUTES.indexOf(prevPath)
+    const b = ROUTES.indexOf(location.pathname)
+    setDirection(a === -1 || b === -1 ? 1 : (Math.sign(b - a) || 1))
+    setPrevPath(location.pathname)
+  }
 
   // Tell the canvas which route to fly to (it reads this every frame).
   useEffect(() => { signals.route = location.pathname }, [location.pathname])
@@ -54,6 +73,7 @@ export default function AppLayout() {
   return (
     <>
       <a href="#main" className="skip-link">Skip to content</a>
+      {DevTuner && <Suspense fallback={null}><DevTuner /></Suspense>}
       <CustomCursor />
       {reduced ? <StaticBackdrop /> : <SceneCanvas route={location.pathname} />}
       {!reduced && <Preloader />}
@@ -62,8 +82,8 @@ export default function AppLayout() {
       <Nav />
 
       <main id="main" className="site-main" tabIndex={-1}>
-        <AnimatePresence mode="wait" onExitComplete={onExitComplete}>
-          <PageTransition key={location.pathname}>
+        <AnimatePresence mode="wait" custom={direction} onExitComplete={onExitComplete}>
+          <PageTransition key={location.pathname} direction={direction}>
             <Routes location={location}>
               <Route path="/" element={<Home />} />
               <Route path="/services" element={<Services />} />

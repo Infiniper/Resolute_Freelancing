@@ -60,7 +60,7 @@ export default function Contact() {
         />
 
         <div className="contact-grid">
-          <Reveal className="glass-card contact-form-card">
+          <Reveal className="glass-card contact-form-card" from="left">
             <form className="contact-form" onSubmit={onSubmit} noValidate>
               <label className="field" htmlFor="cf-name">
                 <span className="field-label">Name</span>
@@ -122,7 +122,7 @@ export default function Contact() {
             </form>
           </Reveal>
 
-          <Reveal className="contact-aside" delay={0.08}>
+          <Reveal className="contact-aside" delay={0.08} from="right">
             <div className="glass-card contact-direct">
               <h2 className="section-title">Direct</h2>
               <a className="contact-email" href={`mailto:${CONTACT.email}`}>{CONTACT.email}</a>

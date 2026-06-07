@@ -1,14 +1,36 @@
-import { Environment, Lightformer, Stars } from '@react-three/drei'
+import { Suspense } from 'react'
+import { Environment, Lightformer, Stars, useTexture } from '@react-three/drei'
+import * as THREE from 'three'
 import SpaceDebris from '../3d/SpaceDebris'
+import Nebulae from '../3d/Nebulae'
+import Constellations from '../3d/Constellations'
+import Aurora from '../3d/Aurora'
+import Traveler from '../3d/Traveler'
 
 // SpaceDebris reads `progress.current` to gust with the storm; the persistent
 // world keeps it calm and slow at all times.
 const calm = { current: 0 }
 
+// The owner supplied an equirectangular Milky-Way image — used as a very dim,
+// dark-tinted backdrop sphere (color multiplies the map down, fog fades it) so
+// it adds deep-space texture without ever reducing text contrast. Procedural
+// nebulae/stars do the heavy lifting; this is just extra richness.
+function MilkyWay() {
+  const tex = useTexture('/2k_stars_milky_way.jpg')
+  return (
+    <mesh scale={[-1, 1, 1]}>
+      <sphereGeometry args={[100, 40, 40]} />
+      <meshBasicMaterial map={tex} color="#2a3550" side={THREE.BackSide} transparent opacity={0.4} depthWrite={false} />
+    </mesh>
+  )
+}
+
 /**
- * The persistent backdrop shared by every route — star field, drifting debris,
- * fog and a baked reflection map. It never unmounts, so flying between pages
- * feels like moving through one continuous space.
+ * The persistent backdrop shared by every route — a rich, layered deep space:
+ * a dim Milky-Way backdrop, two star layers, drifting nebulae, twinkling
+ * constellations, an aurora ribbon, slow debris, and a flying-saucer traveller
+ * that flies between vantages. It never unmounts, so moving between pages feels
+ * like one continuous flight. Counts drop on mobile.
  */
 export default function WorldEnvironment({ mobile }) {
   return (
@@ -27,16 +49,21 @@ export default function WorldEnvironment({ mobile }) {
         <Lightformer intensity={0.7} color="#dbe7ff" position={[0, 9, 3]} scale={[7, 7, 1]} />
       </Environment>
 
-      {/* Big enough that the camera never flies out of it. */}
-      <Stars
-        radius={80}
-        depth={50}
-        count={mobile ? 1400 : 3400}
-        factor={3.2}
-        saturation={0}
-        fade
-        speed={0.6}
-      />
+      {/* Base star field + a sparser layer of larger, brighter "hero" stars. */}
+      <Stars radius={80} depth={50} count={mobile ? 1200 : 3000} factor={3.2} saturation={0} fade speed={0.6} />
+      <Stars radius={90} depth={40} count={mobile ? 200 : 500} factor={7} saturation={0} fade speed={0.4} />
+
+      <Nebulae count={mobile ? 3 : 5} />
+      <Constellations count={mobile ? 2 : 4} />
+      <Aurora position={[0, -12, -45]} scale={[140, 44, 1]} />
+      {!mobile && <Aurora position={[12, 16, -55]} scale={[120, 36, 1]} />}
+
+      {/* Suspending assets (texture + GLB) — kept off the main world tree's
+          render path with their own boundary so they never blank the canvas. */}
+      <Suspense fallback={null}>
+        <MilkyWay />
+        <Traveler mobile={mobile} />
+      </Suspense>
 
       {/* Spread wide and small across the whole flight path so it reads as
           depth between vantages, not clutter over the hero text. */}

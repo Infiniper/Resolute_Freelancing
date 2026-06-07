@@ -16,10 +16,12 @@ export default function Asteroids({ url = "/models/Asteroid.glb", count = 9, pro
     return { geometry: g, material: m };
   }, [gltf]);
 
+  // z is kept strictly behind the title (which sits at z≈0, camera at z=14) so
+  // asteroids never render in front of the wordmark — only deeper in the storm.
   const seeds = useMemo(() => Array.from({ length: count }, () => ({
-    x: (Math.random() - 0.5) * 30, y: (Math.random() - 0.5) * 16, z: (Math.random() - 0.5) * 7,
+    x: (Math.random() - 0.5) * 30, y: (Math.random() - 0.5) * 16, z: -3 - Math.random() * 7,
     rx: Math.random() * 6, ry: Math.random() * 6, rz: Math.random() * 6, spin: 0.1 + Math.random() * 0.35,
-    drift: 0.4 + Math.random() * 0.9, scale: 0.1 + Math.random() * 0.4,
+    drift: 0.4 + Math.random() * 0.9, scale: 0.16 + Math.random() * 0.5,
     swirlAmp: 0.3 + Math.random() * 0.8, swirlFreq: 0.3 + Math.random(), phase: Math.random() * 6,
   })), [count]);
 

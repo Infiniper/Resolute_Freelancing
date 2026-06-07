@@ -30,14 +30,20 @@ export default function CustomCursor() {
     const onOver = (e) => { if (interactive(e.target)) ring?.classList.add('is-hover') }
     const onOut = (e) => { if (interactive(e.target)) ring?.classList.remove('is-hover') }
 
+    // Interactive 3D objects in the canvas dispatch this (see useHover3d) so the
+    // ring reacts to hovering objects in the page's negative space too.
+    const onCursor3d = (e) => ring?.classList.toggle('is-hover', e.detail)
+
     window.addEventListener('pointermove', onMove)
     document.addEventListener('pointerover', onOver)
     document.addEventListener('pointerout', onOut)
+    window.addEventListener('cursor3d', onCursor3d)
     return () => {
       cancelAnimationFrame(raf)
       window.removeEventListener('pointermove', onMove)
       document.removeEventListener('pointerover', onOver)
       document.removeEventListener('pointerout', onOut)
+      window.removeEventListener('cursor3d', onCursor3d)
     }
   }, [])
 

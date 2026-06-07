@@ -1,9 +1,10 @@
 import { useRef } from 'react'
-import { useFrame } from '@react-three/fiber'
+import { useFrame, useThree } from '@react-three/fiber'
 import { Text3D, Center } from '@react-three/drei'
 import { signals } from './signals'
+import { tune } from './tune'
 import {
-  lerp, range, easeInOut, stormIntensity,
+  lerp, range, easeInOut, stormIntensity, clamp01,
   S_BASE, S_LAND, URPRISE_Y, NAME_BASE_Y,
 } from '../data/stormConfig'
 import GlowParticles from '../3d/GlowParticles'
@@ -11,12 +12,15 @@ import WindParticles from '../3d/WindParticles'
 import Asteroids from '../3d/Asteroids'
 import Lightning from '../3d/Lightning'
 
-// Shared Text3D geometry options for the wordmark.
+// Shared Text3D geometry options for the wordmark. Shallow extrusion + a small
+// letter gap so the letters read cleanly (the old deep, tight extrusion looked
+// like a solid slab). All three Text3D share this so they stay consistent.
 const TEXT_OPTS = {
   font: '/fonts/Clash_Display.json',
-  size: 0.9, height: 0.5,
+  size: 0.9, height: 0.22,
   bevelEnabled: true, bevelSize: 0.03, bevelThickness: 0.06, bevelSegments: 4,
   curveSegments: 6,
+  letterSpacing: 0.03,
 }
 
 // The signature electric-blue emissive material, shared by every letter.
@@ -31,9 +35,10 @@ const liveProgress = { get current() { return signals.homeScroll } }
 
 // Drives the object animation (camera lives in CameraRig). Reads the shared
 // scroll signal so it stays in lock-step with the camera pan.
-function HomeDirector({ sceneRef, nameRef, sRef, ambientRef }) {
+function HomeDirector({ sceneRef, nameRef, sRef, ambientRef, urpriseRef, nameMatRef, urpriseMatRef }) {
   useFrame(() => {
     const p = signals.homeScroll
+    const reveal = signals.homeReveal
     const build = range(p, 0.0, 0.35)
     const peak = range(p, 0.35, 0.55)
     const fly = range(p, 0.55, 1.0)
@@ -41,11 +46,21 @@ function HomeDirector({ sceneRef, nameRef, sRef, ambientRef }) {
     const tremor = (build + peak) * 0.05 * (1 - fly)
     const calm = (1 - build * 0.6) * (1 - fly)
 
-    // Cursor tilt of the whole title group (off during the fall).
+    // Cursor tilt of the whole title group (off during the fall) — ~2× stronger.
     if (sceneRef.current) {
-      sceneRef.current.rotation.x = lerp(sceneRef.current.rotation.x, signals.pointer.y * 0.22 * calm, 0.05)
-      sceneRef.current.rotation.y = lerp(sceneRef.current.rotation.y, signals.pointer.x * 0.35 * calm, 0.05)
+      sceneRef.current.rotation.x = lerp(sceneRef.current.rotation.x, signals.pointer.y * 0.38 * calm, 0.05)
+      sceneRef.current.rotation.y = lerp(sceneRef.current.rotation.y, signals.pointer.x * 0.55 * calm, 0.05)
+      // The storm clears, the word dissolves, the message remains: fade the
+      // whole focal group out as the payoff scrolls in, then hide it entirely
+      // so the 3D "surprise!" and the payoff text are never on screen together.
+      sceneRef.current.visible = reveal > 0.02
     }
+
+    const op = clamp01(reveal)
+    if (nameMatRef.current) nameMatRef.current.opacity = op
+    if (urpriseMatRef.current) urpriseMatRef.current.opacity = op
+    if (sRef.current?.material) sRef.current.material.opacity = op
+    if (urpriseRef.current) urpriseRef.current.position.x = tune.urpriseX
 
     // Storm darkens the scene as it peaks, then lifts for the reveal.
     if (ambientRef.current) ambientRef.current.intensity = lerp(0.55, 0.06, stormIntensity(p))
@@ -69,7 +84,7 @@ function HomeDirector({ sceneRef, nameRef, sRef, ambientRef }) {
         sRef.current.scale.setScalar(1)
       } else {
         const P0 = { x: S_BASE.x, y: NAME_BASE_Y + S_BASE.y, z: S_BASE.z }
-        const P2 = S_LAND
+        const P2 = { x: tune.sLandX, y: S_LAND.y, z: S_LAND.z }
         const P1 = { x: (P0.x + P2.x) / 2 - 3, y: (P0.y + P2.y) / 2 + 5, z: 4 } // swoop up & toward camera
         const mt = 1 - e
         sRef.current.position.set(
@@ -97,9 +112,21 @@ export default function HomeScene({ mobile }) {
   const nameRef = useRef()
   const sRef = useRef()
   const ambientRef = useRef()
+  const urpriseRef = useRef()
+  const nameMatRef = useRef()
+  const urpriseMatRef = useRef()
+
+  // Fit the wordmark to the viewport so the hero is never cut off — critical on
+  // a narrow phone (acceptance: the hero must be visible complete on mobile).
+  // Derived from aspect: full size on a wide screen, scaled down as it narrows.
+  // The whole focal group scales uniformly, and CameraRig reads the same
+  // `heroScale` so the storm pan stays locked onto the (scaled) "surprise!".
+  const { width, height } = useThree((s) => s.size)
+  const heroScale = Math.min(1, Math.max(0.34, 0.95 * (width / height)))
+  signals.heroScale = heroScale
 
   return (
-    <group ref={sceneRef}>
+    <group ref={sceneRef} scale={heroScale}>
       {/* Storm-driven lighting (dims as the storm peaks). */}
       <ambientLight ref={ambientRef} intensity={0.55} />
       <directionalLight position={[-6, 8, 6]} intensity={2.2} color="#cfe0ff" />
@@ -110,7 +137,7 @@ export default function HomeScene({ mobile }) {
         <Center>
           <Text3D {...TEXT_OPTS}>
             The Resolute
-            <meshStandardMaterial {...MAT} />
+            <meshStandardMaterial ref={nameMatRef} transparent {...MAT} />
           </Text3D>
         </Center>
       </group>
@@ -118,24 +145,27 @@ export default function HomeScene({ mobile }) {
       {/* The breakaway "s". */}
       <Text3D ref={sRef} position={[S_BASE.x, NAME_BASE_Y + S_BASE.y, S_BASE.z]} {...TEXT_OPTS}>
         s
-        <meshStandardMaterial {...MAT} />
+        <meshStandardMaterial transparent {...MAT} />
       </Text3D>
 
       {/* "urprise!" waiting below — the s lands at its left → "surprise!". */}
-      <group position={[-3.2, URPRISE_Y, 0]}>
+      <group ref={urpriseRef} position={[tune.urpriseX, URPRISE_Y, 0]}>
         <Text3D {...TEXT_OPTS}>
           urprise!
-          <meshStandardMaterial {...MAT} />
+          <meshStandardMaterial ref={urpriseMatRef} transparent {...MAT} />
         </Text3D>
       </group>
 
       {/* Storm */}
       <GlowParticles count={mobile ? 200 : 600} progress={liveProgress} />
       <WindParticles count={mobile ? 6 : 16} progress={liveProgress} />
-      <Asteroids count={mobile ? 5 : 9} progress={liveProgress} />
+      <Asteroids count={mobile ? 3 : 5} progress={liveProgress} />
       <Lightning progress={liveProgress} />
 
-      <HomeDirector sceneRef={sceneRef} nameRef={nameRef} sRef={sRef} ambientRef={ambientRef} />
+      <HomeDirector
+        sceneRef={sceneRef} nameRef={nameRef} sRef={sRef} ambientRef={ambientRef}
+        urpriseRef={urpriseRef} nameMatRef={nameMatRef} urpriseMatRef={urpriseMatRef}
+      />
     </group>
   )
 }
