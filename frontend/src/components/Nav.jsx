@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { signals } from '../scenes/signals'
 
 const LINKS = [
+  ['/', 'Home'],
   ['/services', 'Services'],
   ['/work', 'Work'],
   ['/pricing', 'Pricing'],
@@ -51,6 +52,7 @@ export default function Nav() {
             <NavLink
               key={to}
               to={to}
+              end
               className={({ isActive }) => `nav-link${isActive ? ' is-active' : ''}`}
             >
               {label}
@@ -93,7 +95,7 @@ export default function Nav() {
             >
               {LINKS.map(([to, label]) => (
                 <motion.div key={to} variants={itemVariants}>
-                  <NavLink to={to} className="mobile-link">{label}</NavLink>
+                  <NavLink to={to} end className="mobile-link">{label}</NavLink>
                 </motion.div>
               ))}
               <motion.div variants={itemVariants}>
