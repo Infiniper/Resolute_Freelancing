@@ -4,6 +4,21 @@ export const URPRISE_Y = -16;                          // how far below the reve
 export const S_LAND = { x: -3.7, y: URPRISE_Y, z: 0 };  // where the "s" lands in "urprise" (right edge meets the "u")
 export const NAME_BASE_Y = -0.4;                       // resting Y of "The Resolute"
 
+// Hero keep-out: a box (in the hero group's local space, pre-heroScale) around
+// the standing wordmark. Hero particles must never drift across it — they fly in
+// the bands above / below it, and always behind it in z — so nothing ever
+// crosses the letters. `halfX` covers "The Resolute" + the floating "s".
+export const HERO_KEEPOUT = { halfX: 7, top: 1.2, bottom: -2.0 };
+
+// Pick a resting Y in the clear band either above or below the wordmark (never
+// across it). `gap` clears the keep-out edge with room for the swirl amplitude;
+// `extent` is how far the bands reach. Used on spawn and on horizontal wrap.
+export function bandY(extent = 7.5, gap = 2.0) {
+  return Math.random() < 0.5
+    ? HERO_KEEPOUT.top + gap + Math.random() * (extent - HERO_KEEPOUT.top - gap)
+    : HERO_KEEPOUT.bottom - gap - Math.random() * (extent + HERO_KEEPOUT.bottom - gap);
+}
+
 export const clamp01 = (t) => Math.min(1, Math.max(0, t));
 export const lerp = (a, b, t) => a + (b - a) * t;
 export const range = (p, min, max) => clamp01((p - min) / (max - min));

@@ -27,7 +27,10 @@ export default function GlowParticles({ count = 600, progress }) {
     for (let i = 0; i < count; i++) {
       const x = (Math.random() - 0.5) * 44;
       const y = (Math.random() - 0.5) * 20;
-      const z = (Math.random() - 0.5) * 14;
+      // Strictly behind the wordmark (z 0) — never in front, so the additive
+      // glow can't paint over the letters. Fine dust needs no x/y keep-out: the
+      // wordmark renders on top of it, and it reads as depth in the letter gaps.
+      const z = -3 - Math.random() * 11;
       positions[i * 3] = x; positions[i * 3 + 1] = y; positions[i * 3 + 2] = z;
       data.push({ baseY: y, speed: 0.5 + Math.random() * 1.5, swirlAmp: 0.3 + Math.random() * 1.2, swirlFreq: 0.3 + Math.random() * 1.2, phase: Math.random() * 6 });
     }
