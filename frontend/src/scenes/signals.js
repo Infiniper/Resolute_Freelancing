@@ -16,5 +16,6 @@ export const signals = {
   reducedMotion: false, // prefers-reduced-motion → canvas suppressed in DOM
   isMobile: false,      // coarse pointer / narrow viewport → lighter scenes
   pointer: { x: 0, y: 0 }, // -1..1 normalized, for idle parallax off the canvas
+  pointerSmooth: { x: 0, y: 0 }, // CameraRig lerps this toward `pointer` each frame
   lenis: null,          // the Lenis instance, for scroll-to-top on navigation
 }
