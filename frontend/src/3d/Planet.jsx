@@ -1,4 +1,4 @@
-import { useRef } from 'react'
+import { useCallback, useEffect, useRef } from 'react'
 import { useFrame } from '@react-three/fiber'
 import * as THREE from 'three'
 import useHover3d from './useHover3d'
@@ -21,6 +21,9 @@ export default function Planet({
   const pulse = useRef(0)
   const { hovered, bind } = useHover3d()
 
+  const poke = useCallback(() => { pulse.current = 1 }, [])
+  useEffect(() => { if (grp.current) grp.current.userData.onTap = poke }, [poke])
+
   useFrame((_, dt) => {
     if (core.current) core.current.rotation.y += spin * dt * (hovered ? 3 : 1)
     pulse.current = Math.max(0, pulse.current - dt * 1.6)
@@ -32,7 +35,7 @@ export default function Planet({
       ref={grp}
       position={position}
       {...bind}
-      onClick={(e) => { e.stopPropagation(); pulse.current = 1 }}
+      onClick={(e) => { e.stopPropagation(); poke() }}
     >
       {/* Atmosphere — a slightly larger back-side sphere, additive, for a rim glow. */}
       <mesh scale={1.18}>

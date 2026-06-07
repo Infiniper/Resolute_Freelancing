@@ -156,17 +156,29 @@ body {
   z-index: 1;
 }
 
-/* Interactive 3D: on precise-pointer devices the page content column stays
-   interactive, but the full-width transition wrapper + side gutters become
-   transparent to the pointer, so hovers/clicks over empty negative space fall
-   through to the canvas behind and hit the 3D objects. pointer-events inherits,
-   so re-enabling `.page` / `.home-payoff` covers all their cards, text and
-   links. Touch devices are untouched (the canvas is pointer-events:none there),
-   so page scroll is never blocked. */
+/* Interactive 3D: on precise-pointer devices the whole content layer is made
+   transparent to the pointer, then the actual readable / interactive *content*
+   is re-enabled — but NOT the structural wrappers (`.page`, the grids, the
+   sections, the Reveal/transition divs). That's the key: re-enabling only the
+   real content (cards, headings, controls) leaves the empty negative space
+   *inside* the column transparent too, so hovers/clicks there fall through to
+   the 3D canvas and reach the focal objects — while cards, text and links stay
+   fully interactive. (Re-enabling the whole `.page` column, as before, captured
+   that empty space and is why the 3D objects didn't react.) Touch devices are
+   untouched (the canvas is pointer-events:none there), so scroll is never
+   blocked; taps reach 3D via a window-level tap raycaster instead. */
 @media (hover: hover) and (pointer: fine) {
   .site-main { pointer-events: none; }
-  .page,
-  .home-payoff { pointer-events: auto; }
+  .site-main :is(a, button, input, textarea, select, label),
+  .site-main .glass-card,
+  .site-main .page-header,
+  .site-main .pricing-toggle,
+  .site-main .pricing-note,
+  .site-main .team-note,
+  .site-main .section-title,
+  .site-main .trust-strip {
+    pointer-events: auto;
+  }
 }
 
 /* Reduced-motion / no-canvas fallback backdrop */

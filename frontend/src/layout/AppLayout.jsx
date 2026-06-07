@@ -63,6 +63,43 @@ export default function AppLayout() {
     return () => window.removeEventListener('pointermove', onMove)
   }, [])
 
+  // Touch taps → 3D. On mobile the canvas is pointer-events:none (so scrolling is
+  // never captured), which means R3F never sees a tap. We detect a *tap* (a short
+  // press with little movement, not a scroll) at the window level and hand its
+  // NDC to the in-canvas raycaster via `signals`, so tapping a 3D object still
+  // triggers its reaction. Mouse input is ignored here — it already reaches the
+  // canvas through CSS fall-through and R3F's own events. Taps that land on a
+  // real DOM control (or the canvas itself, on touch laptops) are skipped to
+  // avoid double-firing.
+  useEffect(() => {
+    let x = 0, y = 0, t = 0, moved = false
+    const onDown = (e) => {
+      if (e.pointerType === 'mouse') return
+      x = e.clientX; y = e.clientY; t = performance.now(); moved = false
+    }
+    const onMove = (e) => {
+      if (e.pointerType === 'mouse') return
+      if (Math.abs(e.clientX - x) > 12 || Math.abs(e.clientY - y) > 12) moved = true
+    }
+    const onUp = (e) => {
+      if (e.pointerType === 'mouse' || moved || performance.now() - t > 500) return
+      const el = e.target
+      if (el?.tagName === 'CANVAS') return
+      if (el?.closest?.('a, button, input, textarea, select, label, .glass-card, .pricing-toggle')) return
+      signals.tapX = (e.clientX / window.innerWidth) * 2 - 1
+      signals.tapY = -((e.clientY / window.innerHeight) * 2 - 1)
+      signals.tapSeq++
+    }
+    window.addEventListener('pointerdown', onDown, { passive: true })
+    window.addEventListener('pointermove', onMove, { passive: true })
+    window.addEventListener('pointerup', onUp, { passive: true })
+    return () => {
+      window.removeEventListener('pointerdown', onDown)
+      window.removeEventListener('pointermove', onMove)
+      window.removeEventListener('pointerup', onUp)
+    }
+  }, [])
+
   // Reset scroll to top *between* page transitions, so the exiting page stays
   // put and the entering one starts at its top.
   const onExitComplete = () => {

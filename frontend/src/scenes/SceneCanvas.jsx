@@ -1,5 +1,5 @@
-import { Suspense, lazy, useEffect, useState } from 'react'
-import { Canvas } from '@react-three/fiber'
+import { Suspense, lazy, useEffect, useRef, useState } from 'react'
+import { Canvas, useFrame, useThree } from '@react-three/fiber'
 import { PerformanceMonitor } from '@react-three/drei'
 import { EffectComposer, Bloom, Vignette } from '@react-three/postprocessing'
 import useIsMobile from '../hooks/useIsMobile'
@@ -7,6 +7,31 @@ import WorldEnvironment from './WorldEnvironment'
 import CameraRig from './CameraRig'
 import { WAYPOINTS, fallbackWaypoint } from './waypoints'
 import { signals } from './signals'
+
+// Touch taps reach 3D objects through here: the DOM bumps `signals.tapSeq` with
+// the tap's NDC (see AppLayout), and on a new tap we raycast the scene and poke
+// the first hit object that registered a `userData.onTap` handler (walking up
+// from the hit mesh to its interactive root). Mouse hover/click still go through
+// R3F's own event system — this is only the no-pointer-events-on-canvas (mobile)
+// path. The hit is passed through so instanced fields can read `instanceId`.
+function TapRaycaster() {
+  const { scene, camera, raycaster } = useThree()
+  const seen = useRef(signals.tapSeq)
+  useFrame(() => {
+    if (signals.tapSeq === seen.current) return
+    seen.current = signals.tapSeq
+    raycaster.setFromCamera({ x: signals.tapX, y: signals.tapY }, camera)
+    const hits = raycaster.intersectObjects(scene.children, true)
+    for (const hit of hits) {
+      let o = hit.object
+      while (o) {
+        if (o.userData?.onTap) { o.userData.onTap(hit); return }
+        o = o.parent
+      }
+    }
+  })
+  return null
+}
 
 // Per-route focal scenes, code-split so each page's 3D loads on demand.
 const SCENES = {
@@ -71,6 +96,7 @@ export default function SceneCanvas({ route }) {
       <WorldEnvironment mobile={mobile} />
       <CameraRig route={route} />
       <SceneManager route={route} mobile={mobile} />
+      <TapRaycaster />
 
       {/* The cinematic layer — makes the emissive text, particles and lightning glow. */}
       <EffectComposer>

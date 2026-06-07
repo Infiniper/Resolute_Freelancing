@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef } from 'react'
+import { useCallback, useEffect, useMemo, useRef } from 'react'
 import { useFrame } from '@react-three/fiber'
 import { useGLTF } from '@react-three/drei'
 import * as THREE from 'three'
@@ -24,8 +24,16 @@ export default function GLBModel({
   const { scene } = useGLTF(url)
   const ref = useRef()
   const pingT = useRef(0)
+  const spinImpulse = useRef(0) // click/tap "shove" — a decaying spin kick
   const intro = useRef(0) // 0→1 scale-in
   const { hovered, bind } = useHover3d()
+
+  // The shared reaction for a click (desktop) or tap (mobile): a bright emissive
+  // ping + a randomised spin shove, so the object visibly recoils / spins off.
+  const poke = useCallback(() => {
+    pingT.current = 1.6
+    spinImpulse.current = 7 + Math.random() * 5
+  }, [])
 
   // Deep-clone the model and its materials (so emissive pings don't leak across
   // instances/pages), and start it tiny for the intro. `mats` are the glowable
@@ -48,17 +56,23 @@ export default function GLBModel({
   // geometry is shared with the cached GLTF, so we must NOT dispose that.
   useEffect(() => () => { allMats.forEach((m) => m.dispose()) }, [allMats])
 
+  // Register the tap handler on the model root so the canvas tap-raycaster
+  // (mobile) can poke it; desktop uses the onClick below.
+  useEffect(() => { if (ref.current) ref.current.userData.onTap = poke }, [poke])
+
   useFrame((_, dt) => {
     const m = ref.current
     if (!m) return
     intro.current = Math.min(1, intro.current + dt * 1.5)
-    m.rotation.x += spin[0] * dt
-    m.rotation.y += spin[1] * dt * (hovered ? 2.2 : 1)
+    spinImpulse.current = Math.max(0, spinImpulse.current - dt * 7)
+    const imp = spinImpulse.current
+    m.rotation.x += (spin[0] + imp * 0.5) * dt
+    m.rotation.y += (spin[1] * (hovered ? 2.2 : 1) + imp) * dt
     m.rotation.z += spin[2] * dt
     pingT.current = Math.max(0, pingT.current - dt * 1.5)
-    const target = scale * intro.current * (hovered ? 1.12 : 1 + pingT.current * 0.1)
+    const target = scale * intro.current * (hovered ? 1.14 : 1 + pingT.current * 0.12)
     m.scale.setScalar(THREE.MathUtils.lerp(m.scale.x, target, 0.18))
-    const glow = hovered ? 0.85 : pingT.current * 0.85
+    const glow = hovered ? 0.9 : pingT.current * 0.9
     mats.forEach((mat) => { mat.emissive.set(ping); mat.emissiveIntensity = glow })
   })
 
@@ -68,7 +82,7 @@ export default function GLBModel({
       object={cloned}
       position={position}
       {...bind}
-      onClick={(e) => { e.stopPropagation(); pingT.current = 1.4 }}
+      onClick={(e) => { e.stopPropagation(); poke() }}
     />
   )
 }
