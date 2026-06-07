@@ -1,41 +1,29 @@
-import { useRef } from 'react'
-import { useFrame } from '@react-three/fiber'
 import EnergyCore from '../3d/EnergyCore'
 import GLBModel from '../3d/GLBModel'
 import Crystals from '../3d/Crystals'
 import { MODELS } from '../3d/models'
 
 /**
- * Services = a small cluster of "service" satellites orbiting a glowing core,
- * in the right-hand negative space, with a few shards accenting the far left.
- * Everything sits behind the cards in z so it never fights the text. Each
- * satellite reacts to hover/click (see GLBModel).
+ * Services = a glowing core with a single small satellite drifting off to the
+ * right edge (the old 3-satellite orbit sprawled across the cards — QA flagged
+ * it), plus a few shards accenting the far-left gutter. Everything sits in the
+ * right-hand / left-edge negative space, behind the cards in z. The core and
+ * the satellite both react to hover/click/tap.
+ *
+ * OWNER: nudge the group offset + `satellite` scale/position here if the
+ * satellite ever drifts over a card on your screen width.
  */
 export default function ServicesScene({ mobile }) {
-  const orbit = useRef()
-  useFrame((_, dt) => { if (orbit.current) orbit.current.rotation.y += dt * 0.25 })
-
-  const r = mobile ? 1.7 : 3            // orbit radius
-  const satScale = mobile ? 0.5 : 0.8
-
   return (
-    <group position={mobile ? [1, -5.5, -6] : [6.8, 0.5, -3]} scale={mobile ? 0.6 : 1}>
-      <EnergyCore ring={false} radius={0.7} />
-      <group ref={orbit}>
-        {[0, 1, 2].map((i) => {
-          const a = (i / 3) * Math.PI * 2
-          return (
-            <GLBModel
-              key={i}
-              url={MODELS.satellite}
-              position={[Math.cos(a) * r, Math.sin(a) * 0.6, Math.sin(a) * r]}
-              scale={satScale}
-              spin={[0, 0.5, 0.1]}
-            />
-          )
-        })}
-      </group>
-      {!mobile && <Crystals position={[-14, -1.5, -2]} count={4} />}
+    <group position={mobile ? [1, -6, -6] : [7.8, 1.7, -4]} scale={mobile ? 0.6 : 1}>
+      <EnergyCore ring={false} radius={mobile ? 0.55 : 0.65} />
+      <GLBModel
+        url={MODELS.satellite}
+        position={mobile ? [1.4, -2.4, 0.5] : [2.6, -2.6, 0.5]}
+        scale={mobile ? 0.18 : 0.3}
+        spin={[0.1, 0.4, 0.05]}
+      />
+      {!mobile && <Crystals position={[-15.5, -2, -2]} count={3} />}
     </group>
   )
 }
