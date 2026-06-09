@@ -21,7 +21,7 @@ function Payoff() {
       </p>
       <div className="cta-row">
         <Link to="/work" className="btn-primary">See Our Work</Link>
-        <Link to="/contact" className="btn-ghost">Hire Us</Link>
+        <Link to="/services" className="btn-ghost">Explore Services</Link>
       </div>
       <ul className="trust-strip" aria-label="Selected credentials">
         {TRUST_STRIP.map((item) => <li key={item}>{item}</li>)}
