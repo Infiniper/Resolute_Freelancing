@@ -60,15 +60,17 @@ Scripts: `npm run dev` · `npm run build` · `npm run preview` · `npm run lint`
   satellite → Services; planet → Pricing; astronaut + iss → About; spaceship →
   Work). Each focal scene places 1–2 in negative space, **behind the cards in z**
   and small/edge-placed (keep objects to the right/edges/corners, never top-left;
-  per-scene positions/scales are flagged `OWNER:` for a browser nudge). `Nebulae`
-  (soft, off-center, far back), a dim `MilkyWay` photo-sphere (the deepest
-  backdrop — `/2k_stars_milky_way.jpg` on a big inverted sphere, tinted right
-  down) and `Traveler` (a flying saucer that eases toward each route's vantage
-  and reacts to hover/tap) live in the persistent `WorldEnvironment`. **No
-  constellations / aurora** — they read as flat shapes/slabs across the hero; the
-  Milky-Way wash + nebulae + stars carry the depth. The `<Environment>` keeps its
-  Lightformers (reflections only) but **no `<color attach="background">` child** —
-  it composited a dark-blue slab into the view (see R9).
+  per-scene positions/scales are flagged `OWNER:` for a browser nudge). A dim
+  `MilkyWay` photo-sphere (the deepest backdrop — `/2k_stars_milky_way.jpg` on a
+  big inverted sphere, tinted right down) and `Traveler` (a flying saucer that
+  eases toward each route's vantage and reacts to hover/tap) live in the
+  persistent `WorldEnvironment`. **No constellations / aurora / nebulae / fog** —
+  the soft additive nebula planes and the scene fog each read as a translucent
+  slab/haze across the hero with Bloom on; the Milky-Way wash + stars carry the
+  depth. The `<Environment>` keeps its Lightformers (reflections only — `frames=1`,
+  no `background` prop, so it never paints the backdrop) but **no `<color
+  attach="background">` child**. (`src/3d/Nebulae.jsx` is now unused, left in the
+  tree — see R10.)
 - **Routing** — six routes (`/`, `/services`, `/work`, `/pricing`, `/about`,
   `/contact`) in `AppLayout`, `*` falls back to Home. Transitions via
   `<AnimatePresence mode="wait">` + `PageTransition` keyed on `location.pathname`,
@@ -114,9 +116,9 @@ Scripts: `npm run dev` · `npm run build` · `npm run preview` · `npm run lint`
   z and out of the **keep-out box** (`HERO_KEEPOUT` + `bandY()` in
   `stormConfig.js`): pages/asteroids fly in the bands above/below the letters
   (never across), lightning strikes to the sides. Keep new hero particles behind +
-  banded — and **don't add a wide additive dust field**: Bloom smears it into a
-  translucent band across the whole hero (this is why `GlowParticles` was removed;
-  see R8).
+  banded — and **don't add a wide additive dust field _or large additive planes_**:
+  Bloom smears them into a translucent band/slab across the whole hero (this is why
+  `GlowParticles` (R8) and the `Nebulae` planes (R10) were both removed).
 - The ~1.1MB three + R3F chunk is **inherent** to a 3D app — it's cached, sits
   behind the preloader, and runtime FPS is governed by adaptive DPR/quality, not
   bundle size. `chunkSizeWarningLimit` is raised to `1200` in `vite.config.js`
@@ -217,6 +219,21 @@ Scripts: `npm run dev` · `npm run build` · `npm run preview` · `npm run lint`
     instead (no 2nd context on phones). The wrap is `z-index:-1` under the text
     (`.home-payoff` is `isolation:isolate`) and `pointer-events:none`; clicking
     the section randomizes the colours (`tubes.setColors` / `setLightsColors`).
+- **R10** — kill the hero slab + thin the sky (owner browser feedback): ✅
+  - **`Nebulae` removed** from `WorldEnvironment` (usage + import). Its big soft
+    **additive plane sprites** (blue / indigo / teal / violet) were the
+    translucent slab across the hero — Bloom smears large additive planes into a
+    band, the exact R8 `GlowParticles` failure mode. (Dropping the
+    `<Environment>` `<color>` child in R9 didn't fix it, because a `frames=1`
+    Environment with no `background` prop only feeds reflections, never the
+    visible backdrop.) `src/3d/Nebulae.jsx` is left in the tree but unused, like
+    `GlowParticles`.
+  - **Scene `<fog>` removed** too (owner request) — it read as a haze. The Stars'
+    own `fade` still softens the star edges so depth holds; `MilkyWay`'s
+    `fog={false}` is now a harmless no-op.
+  - Net: the wanted **stars + dim Milky-Way wash** stay; the slab/haze are gone.
+    If any slab somehow persists, the next suspects are the `MilkyWay` tint
+    (darken `#39496a`) or the big `scale={[12,12,1]}` Lightformer.
 
 ## Gotchas / notes
 
