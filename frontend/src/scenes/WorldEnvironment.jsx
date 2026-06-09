@@ -25,9 +25,11 @@ export default function WorldEnvironment({ mobile }) {
 
       {/* Network-free reflection map — electric-blue key + cool fill, so the
           emissive text and metallic surfaces pick up on-brand highlights.
-          frames={1} bakes it once for performance. */}
+          frames={1} bakes it once for performance. NOTE: no `<color
+          attach="background">` child here — it was compositing the env's dark-blue
+          into the view as a slab across the hero. Lightformers stay (reflections
+          only); the scene's real background is the Canvas `<color>` in SceneCanvas. */}
       <Environment resolution={256} frames={1}>
-        <color attach="background" args={['#04060d']} />
         <Lightformer intensity={2.2} color="#3b82f6" position={[-6, 5, -6]} scale={[12, 12, 1]} />
         <Lightformer intensity={1.1} color="#60a5fa" position={[6, -2, 4]} scale={[9, 9, 1]} />
         <Lightformer intensity={0.7} color="#dbe7ff" position={[0, 9, 3]} scale={[7, 7, 1]} />
