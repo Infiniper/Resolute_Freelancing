@@ -4,6 +4,7 @@ import { motion } from 'framer-motion'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import Seo from '../components/Seo'
+import TubesBackground from '../components/TubesBackground'
 import useReducedMotion from '../hooks/useReducedMotion'
 import { signals } from '../scenes/signals'
 import { TRUST_STRIP } from '../data/content'
@@ -70,6 +71,7 @@ export default function Home() {
       <>
         <Seo title={null} />
         <section className="home-payoff">
+          <TubesBackground />
           <Payoff />
         </section>
       </>
@@ -104,6 +106,7 @@ export default function Home() {
         viewport={{ amount: 0.4 }}
         transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
       >
+        <TubesBackground />
         <Payoff />
       </motion.section>
     </>

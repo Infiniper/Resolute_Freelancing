@@ -19,6 +19,10 @@ export default defineConfig({
       output: {
         manualChunks(id) {
           if (!id.includes('node_modules')) return
+          // The neon-tubes payoff effect ships its OWN self-contained three; keep
+          // it out of the app's three/r3f chunks so it stays a lazy, on-demand
+          // chunk (loaded only when the payoff section is reached on desktop).
+          if (id.includes('threejs-components')) return
           if (id.includes('@react-three') || id.includes('postprocessing')) return 'r3f'
           if (id.includes('three')) return 'three' // three, three-stdlib, three-mesh-bvh
           if (id.includes('framer-motion')) return 'motion'

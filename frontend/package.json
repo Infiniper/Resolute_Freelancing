@@ -22,7 +22,8 @@
     "react-dom": "^19.2.6",
     "react-router-dom": "^7.17.0",
     "simplex-noise": "^4.0.3",
-    "three": "^0.184.0"
+    "three": "^0.184.0",
+    "threejs-components": "^0.0.19"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
