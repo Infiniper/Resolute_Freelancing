@@ -117,13 +117,15 @@ export default function Asteroids({ url = "/models/Asteroid.glb", count = 5, pro
   }, [shatter]);
 
   // Desktop hover hint: track the rock under the pointer (per-instance via
-  // instanceId) and switch the custom cursor to its interactive state, so people
-  // sense a rock can be broken. The grow + glow themselves run in useFrame.
-  // (instancedMesh is one object, so moving between rocks fires onPointerMove —
-  // not over/out — hence tracking the live instanceId in onMove.)
-  const onOver = useCallback((e) => { e.stopPropagation(); if (e.instanceId == null) return; hoveredRef.current = e.instanceId; setCursor3d(true); }, []);
+  // instanceId) and swap the cursor to the laser targeting reticle ('break'), so
+  // people sense a rock can be shattered. The grow + glow themselves run in
+  // useFrame. (instancedMesh is one object, so moving between rocks fires
+  // onPointerMove — not over/out — hence tracking the live instanceId in onMove.)
+  const onOver = useCallback((e) => { e.stopPropagation(); if (e.instanceId == null) return; hoveredRef.current = e.instanceId; setCursor3d(true, "break"); }, []);
   const onMove = useCallback((e) => { if (e.instanceId != null) hoveredRef.current = e.instanceId; }, []);
-  const onOut = useCallback((e) => { e.stopPropagation(); hoveredRef.current = -1; setCursor3d(false); }, []);
+  const onOut = useCallback((e) => { e.stopPropagation(); hoveredRef.current = -1; setCursor3d(false, "break"); }, []);
+  // Release the reticle if the field unmounts mid-hover (e.g. route change).
+  useEffect(() => () => setCursor3d(false, "break"), []);
 
   // Hide the (initially empty) fragment + spark pools before the first paint, so
   // they never flash as a clump of full-size instances at the origin.

@@ -55,16 +55,18 @@ Scripts: `npm run dev` · `npm run build` · `npm run preview` · `npm run lint`
   `Crystals` (procedural) and `GLBModel` (loads/clones a Poly Pizza model, tumbles
   it, scale-in intro, hover scale-up + `poke()` = emissive ping + a randomised
   spin shove). `useHover3d` centralises hover state and dispatches the `cursor3d`
-  event that grows the DOM `CustomCursor`. **All 8 GLB models are used**
-  (asteroid → Home field; comet → Contact; saucer → world `Traveler`;
+  event that grows the DOM `CustomCursor` (the shatterable asteroids pass the
+  `'break'` variant → a laser **targeting reticle** instead of the ring — R11).
+  **7 of the 8 GLB models are placed** (asteroid → Home field; comet → Contact;
   satellite → Services; planet → Pricing; astronaut + iss → About; spaceship →
-  Work). Each focal scene places 1–2 in negative space, **behind the cards in z**
-  and small/edge-placed (keep objects to the right/edges/corners, never top-left;
-  per-scene positions/scales are flagged `OWNER:` for a browser nudge). A dim
-  `MilkyWay` photo-sphere (the deepest backdrop — `/2k_stars_milky_way.jpg` on a
-  big inverted sphere, tinted right down) and `Traveler` (a flying saucer that
-  eases toward each route's vantage and reacts to hover/tap) live in the
-  persistent `WorldEnvironment`. **No constellations / aurora / nebulae / fog** —
+  Work); the **saucer** (`Traveler`) was pulled out of the world (R11) and awaits
+  re-placement in a specific scene. Each focal scene places 1–2 in negative space,
+  **behind the cards in z** and small/edge-placed (keep objects to the
+  right/edges/corners, never top-left; per-scene positions/scales are flagged
+  `OWNER:` for a browser nudge). A dim `MilkyWay` photo-sphere (the deepest
+  backdrop — `/2k_stars_milky_way.jpg` on a big inverted sphere, tinted right
+  down) lives in the persistent `WorldEnvironment` with the stars + slow debris.
+  **No constellations / aurora / nebulae / fog** —
   the soft additive nebula planes and the scene fog each read as a translucent
   slab/haze across the hero with Bloom on; the Milky-Way wash + stars carry the
   depth. The `<Environment>` keeps its Lightformers (reflections only — `frames=1`,
@@ -234,6 +236,22 @@ Scripts: `npm run dev` · `npm run build` · `npm run preview` · `npm run lint`
   - Net: the wanted **stars + dim Milky-Way wash** stay; the slab/haze are gone.
     If any slab somehow persists, the next suspects are the `MilkyWay` tint
     (darken `#39496a`) or the big `scale={[12,12,1]}` Lightformer.
+- **R11** — saucer out of the hero + a themed asteroid break-cursor (owner
+  request, per-item commits): ✅
+  - **`Traveler` (flying saucer) removed** from the persistent `WorldEnvironment`
+    (usage + import + its Suspense). It rode the persistent world, so it showed
+    on every route incl. the hero; pulled out to be reused in a specific scene
+    later. `src/3d/Traveler.jsx` stays in the tree, unused (so the saucer GLB is
+    momentarily un-placed — 7 of 8 models rendered).
+  - **Laser targeting reticle cursor** over the shatterable asteroids. Chosen
+    over a lightning-bolt or pickaxe cursor: a reticle is the clearest "target →
+    click to destroy" signal and stays elegant/minimal on-brand. `setCursor3d`
+    now takes a `variant` and dispatches `{ on, variant }`; asteroids send
+    `'break'`. `CustomCursor` gained a `.cursor-reticle` (spinning ring + cardinal
+    ticks + bright core, electric-blue with a glow); `.is-break` on the layer
+    fades out the dot/ring and snaps the reticle in (scale 1.55→1 lock-on). The
+    rock still grows + rim-glows. Honors reduced motion (no spin / snap). Asteroid
+    `onPointerOut` + an unmount cleanup release the reticle.
 
 ## Gotchas / notes
 

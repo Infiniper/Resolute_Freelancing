@@ -100,19 +100,80 @@ body {
   height: 7px;
   background: var(--color-site-accent);
   z-index: 10000;
+  transition: opacity 0.18s ease;
 }
 .cursor-ring {
   width: 32px;
   height: 32px;
   border: 1.5px solid rgba(59, 130, 246, 0.35);
   z-index: 9999;
-  transition: width 0.22s ease, height 0.22s ease, border-color 0.22s ease, background 0.22s ease;
+  transition: width 0.22s ease, height 0.22s ease, border-color 0.22s ease, background 0.22s ease, opacity 0.18s ease;
 }
 .cursor-ring.is-hover {
   width: 52px;
   height: 52px;
   border-color: rgba(96, 165, 250, 0.85);
   background: rgba(59, 130, 246, 0.08);
+}
+
+/* Laser targeting reticle — the break-cursor over the shatterable hero
+   asteroids. The outer element follows the pointer (translate set in JS); the
+   inner SVG scales for the lock-on snap; the ring group spins. Shown only when
+   the layer has `.is-break` (set from the asteroid's 'break' cursor3d event). */
+.cursor-reticle {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 40px;
+  height: 40px;
+  pointer-events: none;
+  z-index: 10001;
+  opacity: 0;
+  transition: opacity 0.16s ease;
+  filter: drop-shadow(0 0 4px rgba(59, 130, 246, 0.8));
+  will-change: transform, opacity;
+}
+.cursor-layer.is-break .cursor-reticle {
+  opacity: 1;
+}
+/* Hand off cleanly: dot + ring fade out while the reticle locks on. */
+.cursor-layer.is-break .cursor-dot,
+.cursor-layer.is-break .cursor-ring {
+  opacity: 0;
+}
+.reticle-svg {
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  transform: scale(1.55); /* relaxed; snaps to 1 on lock-on */
+  transition: transform 0.22s cubic-bezier(0.2, 1.5, 0.34, 1);
+}
+.cursor-layer.is-break .reticle-svg {
+  transform: scale(1);
+}
+.reticle-ring {
+  fill: none;
+  stroke: var(--color-site-accent-bright);
+  stroke-width: 3;
+  stroke-dasharray: 36 20.5; /* four arcs + gaps around r=36 */
+  stroke-linecap: round;
+}
+.reticle-spin {
+  transform-origin: 50% 50%;
+  animation: reticle-spin 4.5s linear infinite;
+}
+.reticle-ticks line {
+  stroke: var(--color-site-accent);
+  stroke-width: 3;
+  stroke-linecap: round;
+}
+.reticle-core {
+  fill: var(--color-site-accent-bright);
+}
+@keyframes reticle-spin {
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 /* ── Keyboard focus — visible, on-brand ── */
@@ -731,6 +792,12 @@ body {
   }
   .cursor-ring {
     transition: none;
+  }
+  .reticle-svg {
+    transition: none;
+  }
+  .reticle-spin {
+    animation: none;
   }
   html {
     scroll-behavior: auto;
