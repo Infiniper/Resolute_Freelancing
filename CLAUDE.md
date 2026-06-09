@@ -56,15 +56,19 @@ Scripts: `npm run dev` · `npm run build` · `npm run preview` · `npm run lint`
   it, scale-in intro, hover scale-up + `poke()` = emissive ping + a randomised
   spin shove). `useHover3d` centralises hover state and dispatches the `cursor3d`
   event that grows the DOM `CustomCursor`. **All 8 GLB models are used**
-  (asteroid → Home field; comet → Home + Contact; saucer → world `Traveler`;
+  (asteroid → Home field; comet → Contact; saucer → world `Traveler`;
   satellite → Services; planet → Pricing; astronaut + iss → About; spaceship →
   Work). Each focal scene places 1–2 in negative space, **behind the cards in z**
   and small/edge-placed (keep objects to the right/edges/corners, never top-left;
   per-scene positions/scales are flagged `OWNER:` for a browser nudge). `Nebulae`
-  (soft, off-center, far back) and `Traveler` (a flying saucer that eases toward
-  each route's vantage and reacts to hover/tap) live in the persistent
-  `WorldEnvironment`. **No constellations / aurora** — they read as flat
-  shapes/slabs across the hero; nebulae + stars carry the depth.
+  (soft, off-center, far back), a dim `MilkyWay` photo-sphere (the deepest
+  backdrop — `/2k_stars_milky_way.jpg` on a big inverted sphere, tinted right
+  down) and `Traveler` (a flying saucer that eases toward each route's vantage
+  and reacts to hover/tap) live in the persistent `WorldEnvironment`. **No
+  constellations / aurora** — they read as flat shapes/slabs across the hero; the
+  Milky-Way wash + nebulae + stars carry the depth. The `<Environment>` keeps its
+  Lightformers (reflections only) but **no `<color attach="background">` child** —
+  it composited a dark-blue slab into the view (see R9).
 - **Routing** — six routes (`/`, `/services`, `/work`, `/pricing`, `/about`,
   `/contact`) in `AppLayout`, `*` falls back to Home. Transitions via
   `<AnimatePresence mode="wait">` + `PageTransition` keyed on `location.pathname`,
@@ -128,13 +132,12 @@ Scripts: `npm run dev` · `npm run build` · `npm run preview` · `npm run lint`
   for each Poly Pizza model (CC-BY requires real author names; shown in `Footer`).
 - **Object tuning** (visual, needs a browser): per-scene object positions/scales
   in `src/scenes/*Scene.jsx` (search `OWNER:` — esp. the **Pricing `Planet.glb`
-  scale** and **Home comet** scale, whose native sizes are unknown to me, plus
-  the Services satellite + About astronaut/iss offsets), and the `s` seam via the
-  dev leva panel → bake into `stormConfig.js` / `tune.js`.
+  scale**, whose native size is unknown to me, plus the Services satellite +
+  About astronaut/iss offsets), the `MilkyWay` tint in `WorldEnvironment`, and the
+  `s` seam via the dev leva panel → bake into `stormConfig.js` / `tune.js`.
 - Done by the owner: `EMAILJS` keys + `CONTACT` social URLs are filled in, **and
-  the WhatsApp/phone numbers** (`CONTACT.phones`); `/public/2k_stars_milky_way.jpg`
-  is wired as the dim Milky-Way backdrop. (Still add a `{{phone}}` field to the
-  EmailJS template so the form's optional phone comes through.)
+  the WhatsApp/phone numbers** (`CONTACT.phones`). (Still add a `{{phone}}` field
+  to the EmailJS template so the form's optional phone comes through.)
 
 ## Phase status
 
@@ -182,6 +185,38 @@ Scripts: `npm run dev` · `npm run build` · `npm run preview` · `npm run lint`
   wired and stays). Deleting the field kills the band; the wordmark, storm pages,
   asteroids, lightning + comet still carry the storm. `src/3d/GlowParticles.jsx`
   remains in the tree but is now unused (left in place, not deleted). ✅
+- **R9** — restore + enrich the sky, and two payoff features (per-item commits): ✅
+  - **World backdrop restored + de-banded.** A diagnostic had left the whole
+    `WorldEnvironment` behind `{false && …}` in `SceneCanvas` (stars, nebula
+    glows, fog, debris, the saucer — all off). Re-enabled it, and removed the
+    `<color attach="background">` child from `<Environment>`: *that* was the
+    remaining blue slab (it composited the env's dark-blue into the view). The
+    Lightformers stay (reflections only). **If the slab ever returns**, the next
+    step is to shrink/drop the big `scale={[12,12,1]}` Lightformer.
+  - **Milky-Way backdrop actually wired** (it was referenced nowhere before,
+    despite earlier notes): `/2k_stars_milky_way.jpg` on a big inverted sphere
+    (`MilkyWay`), `BackSide`, tinted `#39496a`, `fog={false}`,
+    `depthWrite={false}` — a dim deep wash under the nebulae + stars.
+  - **Hero comet removed** from `HomeScene` (function + usage + now-unused
+    `GLBModel`/`MODELS` imports) — to be reused elsewhere; the comet still lives
+    in Contact, so all 8 models stay in use.
+  - **Payoff CTA** "Hire Us" → **"Explore Services"** → `/services` (the nav's
+    top-right "Hire Us" is untouched).
+  - **Asteroid hover hint** (`Asteroids.jsx`): hovering a hero rock eases it up
+    ~1.12× and rides a soft additive inverted-hull halo (brand-blue rim that
+    blooms) + flips the custom cursor via `cursor3d` — so people sense rocks are
+    breakable. Per-instance via the event `instanceId`; click/tap-to-shatter
+    unchanged.
+  - **Neon "tubes" payoff background** (`TubesBackground`, `threejs-components`
+    tubes1) on the `.home-payoff` section only — a **second** WebGL context, so:
+    dynamic import → its own lazy chunk (its bundled three is self-contained;
+    `manualChunks` excludes `threejs-components`); `IntersectionObserver`
+    lazy-inits it **only while the section is on screen** and disposes on leave
+    (`app.dispose()` + `WEBGL_lose_context`, fresh canvas each time); **skipped on
+    touch / reduced-motion / narrow / `signals.quality < 1`** → static gradient
+    instead (no 2nd context on phones). The wrap is `z-index:-1` under the text
+    (`.home-payoff` is `isolation:isolate`) and `pointer-events:none`; clicking
+    the section randomizes the colours (`tubes.setColors` / `setLightsColors`).
 
 ## Gotchas / notes
 
