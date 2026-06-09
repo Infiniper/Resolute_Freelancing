@@ -93,7 +93,8 @@ export default function SceneCanvas({ route }) {
         onIncline={() => { setDpr(maxDpr); setDegraded(false) }}
       />
 
-      <WorldEnvironment mobile={mobile} />
+      {/* DIAG STEP C: whole WorldEnvironment disabled (Environment/Stars/fog/etc). */}
+      {false && <WorldEnvironment mobile={mobile} />}
       <CameraRig route={route} />
       <SceneManager route={route} mobile={mobile} />
       <TapRaycaster />
