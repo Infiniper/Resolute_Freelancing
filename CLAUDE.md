@@ -221,6 +221,8 @@ Scripts: `npm run dev` · `npm run build` · `npm run preview` · `npm run lint`
     instead (no 2nd context on phones). The wrap is `z-index:-1` under the text
     (`.home-payoff` is `isolation:isolate`) and `pointer-events:none`; clicking
     the section randomizes the colours (`tubes.setColors` / `setLightsColors`).
+    *(R12: those mount-latched gates — above all the `quality < 1` skip — turned
+    out to be why the effect never visibly appeared; relaxed + made live there.)*
 - **R10** — kill the hero slab + thin the sky (owner browser feedback): ✅
   - **`Nebulae` removed** from `WorldEnvironment` (usage + import). Its big soft
     **additive plane sprites** (blue / indigo / teal / violet) were the
@@ -252,6 +254,51 @@ Scripts: `npm run dev` · `npm run build` · `npm run preview` · `npm run lint`
     fades out the dot/ring and snaps the reticle in (scale 1.55→1 lock-on). The
     rock still grows + rim-glows. Honors reduced motion (no spin / snap). Asteroid
     `onPointerOut` + an unmount cleanup release the reticle.
+- **R12** — the neon tubes were never actually visible (owner: "integrated 3–4
+  times, never seen it") — root-caused, fixed, and rolled out site-wide as
+  closing CTA bands. ✅ owner-verified in the browser ("it worked").
+  - **Why it never showed** — three independent, *silent* kills in
+    `TubesBackground.jsx`, any one of which left only the faint static gradient:
+    1. `start()` hard-skipped whenever `signals.quality < 1`. Drei's
+       `PerformanceMonitor` flips quality to 0.5 after any frame-rate dip — the
+       storm hero (DPR 2 + Bloom) dips on most non-gaming machines during load,
+       and on a 60Hz display it tends to *stay* degraded (`onIncline` needs fps
+       above the upper bound). By the time anyone scrolled to the payoff the
+       gate was shut. No error, no signal.
+    2. The `enabled` matchMedia gate (incl. `max-width: 820px`) was latched
+       **once at mount**: load the site in a half-width window (DevTools docked)
+       and the effect stayed dead all session, even after maximizing.
+    3. A one-off import failure poisoned it permanently: the `starting` flag was
+       never reset on a rejected import (deadlocking every retry), the cached
+       module promise kept the rejection forever, and the error was swallowed.
+    Plus, in dev, the first scroll to a tubes section made Vite discover the
+    dynamic `threejs-components` dep → "optimized → **full page reload**" right
+    as the effect was about to appear.
+  - **Fixes** (`TubesBackground.jsx`): the quality gate no longer skips init —
+    a degraded machine gets a lower pixel-ratio cap instead (1.25 vs the lib's
+    pinned 2, via `app.three.min/maxPixelRatio` + `resize()`); the gate is now
+    live media-query listeners using the site's standard desktop test
+    (`(hover:hover) and (pointer:fine)`) + reduced-motion (width gate dropped —
+    phones are covered by hover/pointer; reduced-motion is still honored
+    end-to-end); import failures `console.error`, reset `starting` and clear the
+    cached promise; one-time `console.info('[TubesBackground] neon tubes
+    running')` confirms boot for manual checks; IO pre-warms 240px before the
+    section arrives; a `dead` flag guards unmount/StrictMode races. Also
+    `optimizeDeps.exclude: ['threejs-components']` in `vite.config.js` (the
+    file is one self-contained ESM — serving it unbundled kills the dev reload).
+  - `.home-payoff` joined `.cta-band` in the fine-pointer `pointer-events: auto`
+    re-enable list: both are opaque, full-viewport tube hosts (the 3D canvas is
+    fully covered there), and without it the payoff's click-to-randomize could
+    never fire on desktop.
+  - **`CtaBand`** (`components/CtaBand.jsx`) — a full-height, opaque closing
+    "moment" hosting the same `TubesBackground`, dropped in as a sibling AFTER
+    the `.page` column on **Work / Services / Pricing / About** (it replaces the
+    small `.page-cta` on Services/Pricing, whose CSS is gone). This is the
+    "tubes everywhere, but never under a wandering model" answer: each route's
+    focal 3D model lives over the content area, so the tubes get their own
+    opaque band where no model can bleed through. **Contact deliberately has
+    none** (the page *is* the form + the comet's region; a second full-screen
+    CTA before the footer reads as noise — owner call if wanted).
 
 ## Gotchas / notes
 

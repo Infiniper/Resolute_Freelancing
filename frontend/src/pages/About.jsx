@@ -1,6 +1,7 @@
 import Seo from '../components/Seo'
 import PageHeader from '../components/PageHeader'
 import Reveal from '../components/Reveal'
+import CtaBand from '../components/CtaBand'
 import { TEAM, CREDENTIALS } from '../data/content'
 
 const initials = (name) =>
@@ -63,6 +64,12 @@ export default function About() {
           </ul>
         </section>
       </div>
+
+      <CtaBand
+        eyebrow="Firm. Determined. Unwavering."
+        title="Let’s make something resolute."
+        primary={{ to: '/contact', label: 'Get in touch' }}
+      />
     </>
   )
 }

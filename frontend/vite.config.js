@@ -7,6 +7,14 @@ export default defineConfig({
     react(),
     tailwindcss(),
   ],
+  optimizeDeps: {
+    // The tubes-cursor build is a single self-contained ESM file (no bare
+    // imports), dynamically imported the first time a tubes section nears the
+    // viewport. Don't prebundle it: discovering it mid-session triggers Vite's
+    // "new dependency optimized → full page reload", which in dev kicked you
+    // back to the top of the page right as the effect was about to appear.
+    exclude: ['threejs-components'],
+  },
   build: {
     // three.js is large by nature; split heavy libraries into their own
     // long-lived, cacheable chunks rather than one monolith. The combined

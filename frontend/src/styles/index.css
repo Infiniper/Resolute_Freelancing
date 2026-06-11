@@ -237,7 +237,14 @@ body {
   .site-main .pricing-note,
   .site-main .team-note,
   .site-main .section-title,
-  .site-main .trust-strip {
+  .site-main .trust-strip,
+  /* The Home payoff + the closing CTA bands are opaque, full-viewport tube
+     sections — the 3D canvas is fully covered there, so they own their pointer
+     events (nothing visible behind to fall through to) and the tubes'
+     click-to-randomize can fire. The .tubes-wrap/.tubes-canvas inside keep
+     their own pointer-events:none, so the click reaches the section itself. */
+  .site-main .home-payoff,
+  .site-main .cta-band {
     pointer-events: auto;
   }
 }
@@ -912,15 +919,37 @@ body {
   align-items: flex-start;
   gap: 0.75rem;
 }
-.page-cta {
-  margin-top: 2rem;
+/* ── Closing CTA "moment" — Work / Services / Pricing / About ──
+   A full-height, opaque neon-tubes section that closes a content page: the same
+   tube effect as the Home payoff (`.tubes-wrap` fills it at z-index:-1), reused
+   here as a per-page call to action. It's opaque + full-viewport on purpose, so
+   the tubes own their region and the route's fixed focal 3D model never bleeds
+   through — mirrors the `.home-payoff` tube-hosting contract. */
+.cta-band {
+  position: relative;
+  /* Own stacking context so the tubes background (z-index:-1) stays contained:
+     above this section's gradient, below the CTA copy. */
+  isolation: isolate;
+  min-height: 100vh;
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
-  gap: 1rem;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  gap: 1.5rem;
+  padding: 6rem clamp(1.25rem, 5vw, 3rem);
+  /* Fully opaque base (a faint blue glow on top) so nothing behind bleeds through. */
+  background:
+    radial-gradient(ellipse 80% 60% at 50% 38%, rgba(59, 130, 246, 0.1), transparent 70%),
+    #05070e;
 }
-.page-cta p {
-  color: var(--color-site-fore-dim);
+.cta-band .display-lg {
+  max-width: 18ch;
+}
+/* Keep the copy legible where a bright tube passes behind it. */
+.cta-band .eyebrow,
+.cta-band .display-lg {
+  text-shadow: 0 2px 18px rgba(5, 7, 14, 0.85);
 }
 
 /* Work */

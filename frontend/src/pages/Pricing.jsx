@@ -1,9 +1,9 @@
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Link } from 'react-router-dom'
 import Seo from '../components/Seo'
 import PageHeader from '../components/PageHeader'
 import Reveal from '../components/Reveal'
+import CtaBand from '../components/CtaBand'
 import { PRICING } from '../data/content'
 
 export default function Pricing() {
@@ -70,12 +70,13 @@ export default function Pricing() {
         <p className="pricing-note">
           These are starting ranges — final quotes depend on scope, timeline and complexity.
         </p>
-
-        <Reveal className="page-cta">
-          <p>Want an exact number?</p>
-          <Link to="/contact" className="btn-primary">Get a quote</Link>
-        </Reveal>
       </div>
+
+      <CtaBand
+        eyebrow="Want an exact number?"
+        title="Tell us the scope, get a quote."
+        primary={{ to: '/contact', label: 'Get a quote' }}
+      />
     </>
   )
 }

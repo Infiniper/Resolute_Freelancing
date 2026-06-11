@@ -1,8 +1,8 @@
-import { Link } from 'react-router-dom'
 import Seo from '../components/Seo'
 import PageHeader from '../components/PageHeader'
 import Reveal from '../components/Reveal'
 import TiltCard from '../components/TiltCard'
+import CtaBand from '../components/CtaBand'
 import { SERVICES } from '../data/content'
 
 export default function Services() {
@@ -36,12 +36,14 @@ export default function Services() {
             </Reveal>
           ))}
         </ul>
-
-        <Reveal className="page-cta">
-          <p>Have something specific in mind?</p>
-          <Link to="/contact" className="btn-primary">Tell us about it</Link>
-        </Reveal>
       </div>
+
+      <CtaBand
+        eyebrow="Have something specific in mind?"
+        title="Let’s scope it together."
+        primary={{ to: '/contact', label: 'Tell us about it' }}
+        secondary={{ to: '/work', label: 'See our work' }}
+      />
     </>
   )
 }
