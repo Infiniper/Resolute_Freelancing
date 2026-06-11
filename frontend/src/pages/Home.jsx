@@ -27,6 +27,11 @@ function Payoff() {
       <ul className="trust-strip" aria-label="Selected credentials">
         {TRUST_STRIP.map((item) => <li key={item}>{item}</li>)}
       </ul>
+      {/* Pointer-only easter-egg hint — CSS shows it only where the live tube
+          canvas can actually run (fine pointer + motion OK). */}
+      <p className="tubes-hint" aria-hidden="true">
+        The tubes follow your cursor — click anywhere to change their colors.
+      </p>
     </>
   )
 }

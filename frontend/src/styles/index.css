@@ -518,6 +518,29 @@ body {
   text-shadow: 0 2px 18px rgba(5, 7, 14, 0.85);
 }
 
+/* The "click to change the colors" hint under the tube sections' CTAs. Shown
+   only where the live canvas actually runs — same gates as TubesBackground
+   (fine hover pointer, motion OK); touch / reduced-motion get the static
+   gradient and no hint. Clicking the hint itself counts as clicking the
+   section, so it randomizes the colors too. */
+.tubes-hint {
+  display: none;
+  font-size: 0.78rem;
+  letter-spacing: 0.05em;
+  color: var(--color-site-fore-dim);
+  animation: tubes-hint-pulse 3.2s ease-in-out infinite;
+}
+@media (hover: hover) and (pointer: fine) {
+  .tubes-hint { display: block; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .tubes-hint { display: none; }
+}
+@keyframes tubes-hint-pulse {
+  0%, 100% { opacity: 0.55; }
+  50% { opacity: 1; }
+}
+
 .cta-row {
   display: flex;
   flex-wrap: wrap;

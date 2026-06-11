@@ -167,8 +167,8 @@ export default function HomeScene({ mobile }) {
 
       {/* Storm — no GlowParticles dust field: the Bloom pass smeared its additive
           glow sprites into a continuous translucent band across the hero. The
-          wordmark, pages, asteroids and lightning carry the storm instead. (The
-          wandering comet was removed too — to be reused elsewhere.) */}
+          wordmark, pages, asteroids and lightning carry the storm; the dark
+          storm-sky clouds behind it are the world's drei <Clouds> (R13). */}
       <WindParticles count={mobile ? 6 : 16} progress={liveProgress} />
       <Asteroids count={mobile ? 3 : 5} progress={liveProgress} />
       <Lightning progress={liveProgress} />

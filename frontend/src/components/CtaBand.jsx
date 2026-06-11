@@ -32,6 +32,11 @@ export default function CtaBand({ eyebrow, title, primary, secondary }) {
         <Link to={primary.to} className="btn-primary">{primary.label}</Link>
         {secondary && <Link to={secondary.to} className="btn-ghost">{secondary.label}</Link>}
       </div>
+      {/* Pointer-only easter-egg hint — CSS shows it only where the live tube
+          canvas can actually run (fine pointer + motion OK). */}
+      <p className="tubes-hint" aria-hidden="true">
+        The tubes follow your cursor — click anywhere to change their colors.
+      </p>
     </motion.section>
   )
 }

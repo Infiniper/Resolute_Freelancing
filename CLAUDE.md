@@ -65,14 +65,17 @@ Scripts: `npm run dev` · `npm run build` · `npm run preview` · `npm run lint`
   right/edges/corners, never top-left; per-scene positions/scales are flagged
   `OWNER:` for a browser nudge). A dim `MilkyWay` photo-sphere (the deepest
   backdrop — `/2k_stars_milky_way.jpg` on a big inverted sphere, tinted right
-  down) lives in the persistent `WorldEnvironment` with the stars + slow debris.
-  **No constellations / aurora / nebulae / fog** —
-  the soft additive nebula planes and the scene fog each read as a translucent
-  slab/haze across the hero with Bloom on; the Milky-Way wash + stars carry the
-  depth. The `<Environment>` keeps its Lightformers (reflections only — `frames=1`,
-  no `background` prop, so it never paints the backdrop) but **no `<color
-  attach="background">` child**. (`src/3d/Nebulae.jsx` is now unused, left in the
-  tree — see R10.)
+  down) lives in the persistent `WorldEnvironment` with **five volumetric drei
+  `<Clouds>` storm banks** (R13 — owner's reference `public/clouds.png` +
+  owner-tuned spec: one large / two medium / two small spread across
+  x −14…+14, y −4…+6, z −5…−14, seeds randomized each load — `CLOUD_BANKS`),
+  the stars + slow debris. **No constellations / aurora /
+  nebulae / fog** — those read as flat shapes / haze across the hero with Bloom
+  on. (The owner re-diagnosed the old hero slab as the magnified flying saucer —
+  gone since R11 — clearing soft background clouds for use; `src/3d/Nebulae.jsx`
+  stays unused in the tree.) The `<Environment>` keeps its Lightformers
+  (reflections only — `frames=1`, no `background` prop, so it never paints the
+  backdrop) but **no `<color attach="background">` child**.
 - **Routing** — six routes (`/`, `/services`, `/work`, `/pricing`, `/about`,
   `/contact`) in `AppLayout`, `*` falls back to Home. Transitions via
   `<AnimatePresence mode="wait">` + `PageTransition` keyed on `location.pathname`,
@@ -210,7 +213,8 @@ Scripts: `npm run dev` · `npm run build` · `npm run preview` · `npm run lint`
     ~1.12× and rides a soft additive inverted-hull halo (brand-blue rim that
     blooms) + flips the custom cursor via `cursor3d` — so people sense rocks are
     breakable. Per-instance via the event `instanceId`; click/tap-to-shatter
-    unchanged.
+    unchanged. *(R13 removed the grow + halo — the reticle cursor is now the
+    only hover signal.)*
   - **Neon "tubes" payoff background** (`TubesBackground`, `threejs-components`
     tubes1) on the `.home-payoff` section only — a **second** WebGL context, so:
     dynamic import → its own lazy chunk (its bundled three is self-contained;
@@ -231,7 +235,9 @@ Scripts: `npm run dev` · `npm run build` · `npm run preview` · `npm run lint`
     `<Environment>` `<color>` child in R9 didn't fix it, because a `frames=1`
     Environment with no `background` prop only feeds reflections, never the
     visible backdrop.) `src/3d/Nebulae.jsx` is left in the tree but unused, like
-    `GlowParticles`.
+    `GlowParticles`. *(R13: the owner re-diagnosed the slab as the magnified
+    flying-saucer `Traveler` — removed in R11 — and space clouds returned as
+    drei volumetric `<Clouds>`; the Nebulae planes stay retired.)*
   - **Scene `<fog>` removed** too (owner request) — it read as a haze. The Stars'
     own `fade` still softens the star edges so depth holds; `MilkyWay`'s
     `fog={false}` is now a harmless no-op.
@@ -299,6 +305,44 @@ Scripts: `npm run dev` · `npm run build` · `npm run preview` · `npm run lint`
     opaque band where no model can bleed through. **Contact deliberately has
     none** (the page *is* the form + the comet's region; a second full-screen
     CTA before the footer reads as noise — owner call if wanted).
+- **R13** — Home hero tweaks + tubes hint (owner request, per-item commits):
+  - **Asteroid hover is cursor-only now** ✅ owner-verified ("the asteroids are
+    nice"): the R9 grow (1.12×) + additive inverted-hull rim halo are gone
+    (`glowRef`/`glowIdx`/`hoveredRef`, the `glowMat` material, the halo mesh
+    and the per-seed `hoverT` easing all removed from `Asteroids.jsx`).
+    Hovering a rock still flips the custom cursor to the R11 laser targeting
+    reticle (`setCursor3d(true, 'break')` on over, released on out + unmount);
+    click/tap-to-shatter unchanged.
+  - **Space clouds — volumetric drei `<Clouds>` storm banks** ⏳ pending owner
+    check, in `WorldEnvironment`, built to the owner's reference shot
+    **`public/clouds.png`** and twice owner-tuned (two masses → six even
+    far-back banks → the current owner spec): **five banks in the
+    `CLOUD_BANKS` table** — one large (volume 18, bounds [22,7,6]), two medium
+    (volume 10–11, [14,5,4]), two small (volume 5–6, [8,3,3]) — spread across
+    **x −14…+14, y −4…+6, z −5…−14** with no two banks sharing a similar
+    x AND y, alternating deep navy `#2a3550` / almost-black slate `#1e2840`,
+    opacity 0.38–0.44, behind the wordmark in z (the renderOrder-10 letters
+    always composite on top). **Seeds randomize every page load** (fresh cloud
+    shapes per visit; `seed()` at module level) and speeds vary 0.12–0.25 so
+    the banks never roil in lockstep. `material={MeshBasicMaterial}`
+    (the world's lights are far too dim for the default Lambert), per-bank
+    segment counts (halved on mobile), own `<Suspense>` (texture load
+    never blanks the world), and the puff sprite is **baked locally**
+    (canvas → data URL) instead of drei's CDN-fetched default — the repo stays
+    network-free. Positions flagged `OWNER:`. It took three passes to land:
+    dim banded sprites (rejected — "like the first pass, not the opposite
+    way") → `Nebulae` planes restored (rejected — "didn't ask for Nebulae,
+    match `public/clouds.png`") → these; the owner re-diagnosed the old R10
+    slab as the magnified flying saucer (gone since R11), clearing soft
+    background clouds. If a slab ever reappears: cloud `opacity`, `MilkyWay`
+    tint, the big Lightformer — in that order.
+  - **Tubes hint** ⏳: a small pulsing line under the CTAs of every tube
+    section (Home payoff + all four `CtaBand`s): "The tubes follow your cursor
+    — click anywhere to change their colors." `.tubes-hint` is `display:none`
+    except under `(hover:hover) and (pointer:fine)`, and re-hidden under
+    `prefers-reduced-motion` — the same gates `TubesBackground` uses, so the
+    hint can never show where the live canvas won't run. Clicking the hint
+    itself also randomizes (it isn't an excluded control).
 
 ## Gotchas / notes
 
