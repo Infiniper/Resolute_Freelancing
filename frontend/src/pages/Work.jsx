@@ -2,6 +2,7 @@ import Seo from '../components/Seo'
 import PageHeader from '../components/PageHeader'
 import Reveal from '../components/Reveal'
 import ProjectMedia from '../components/ProjectMedia'
+import CtaBand from '../components/CtaBand'
 import { PROJECTS } from '../data/content'
 
 export default function Work() {
@@ -56,6 +57,13 @@ export default function Work() {
           ))}
         </div>
       </div>
+
+      <CtaBand
+        eyebrow="That’s the proof."
+        title="Like what you see? Let’s build yours."
+        primary={{ to: '/contact', label: 'Start a project' }}
+        secondary={{ to: '/services', label: 'Explore services' }}
+      />
     </>
   )
 }

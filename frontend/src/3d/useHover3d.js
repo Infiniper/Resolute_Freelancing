@@ -1,10 +1,12 @@
 import { useState, useCallback, useEffect } from 'react'
 
 // Bridge so 3D pointer events can drive the DOM custom cursor (which lives in a
-// separate reconciler). CustomCursor listens for this event and grows its ring.
-export function setCursor3d(on) {
+// separate reconciler). CustomCursor listens for this event. `variant` picks the
+// cursor treatment: 'default' grows the ring (every interactive object); 'break'
+// swaps in the laser targeting reticle (the shatterable hero asteroids).
+export function setCursor3d(on, variant = 'default') {
   if (typeof window !== 'undefined') {
-    window.dispatchEvent(new CustomEvent('cursor3d', { detail: on }))
+    window.dispatchEvent(new CustomEvent('cursor3d', { detail: { on, variant } }))
   }
 }
 

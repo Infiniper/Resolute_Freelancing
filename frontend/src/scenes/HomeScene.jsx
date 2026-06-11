@@ -10,25 +10,6 @@ import {
 import WindParticles from '../3d/WindParticles'
 import Asteroids from '../3d/Asteroids'
 import Lightning from '../3d/Lightning'
-import GLBModel from '../3d/GLBModel'
-import { MODELS } from '../3d/models'
-
-// A small comet streaking slowly across the upper background — kept well behind
-// the wordmark in z and above the letter band in y, so it never crosses the
-// title. OWNER: nudge `scale` / the y (6.6) / z (-9) if it reads too small.
-function HeroComet() {
-  const g = useRef()
-  useFrame((s) => {
-    if (!g.current) return
-    const t = s.clock.elapsedTime * 0.05
-    g.current.position.set(-18 + ((t * 9) % 40), 6.6 + Math.sin(t * 1.3) * 0.5, -9)
-  })
-  return (
-    <group ref={g}>
-      <GLBModel url={MODELS.comet} scale={0.6} spin={[0, 0.3, 0.4]} />
-    </group>
-  )
-}
 
 // Shared Text3D geometry options for the wordmark. Shallow extrusion + a small
 // letter gap so the letters read cleanly (the old deep, tight extrusion looked
@@ -186,11 +167,11 @@ export default function HomeScene({ mobile }) {
 
       {/* Storm — no GlowParticles dust field: the Bloom pass smeared its additive
           glow sprites into a continuous translucent band across the hero. The
-          wordmark, pages, asteroids, lightning + comet carry the storm instead. */}
+          wordmark, pages, asteroids and lightning carry the storm; the dark
+          storm-sky clouds behind it are the world's drei <Clouds> (R13). */}
       <WindParticles count={mobile ? 6 : 16} progress={liveProgress} />
       <Asteroids count={mobile ? 3 : 5} progress={liveProgress} />
       <Lightning progress={liveProgress} />
-      {!mobile && <HeroComet />}
 
       <HomeDirector
         sceneRef={sceneRef} nameRef={nameRef} sRef={sRef} ambientRef={ambientRef}

@@ -100,19 +100,80 @@ body {
   height: 7px;
   background: var(--color-site-accent);
   z-index: 10000;
+  transition: opacity 0.18s ease;
 }
 .cursor-ring {
   width: 32px;
   height: 32px;
   border: 1.5px solid rgba(59, 130, 246, 0.35);
   z-index: 9999;
-  transition: width 0.22s ease, height 0.22s ease, border-color 0.22s ease, background 0.22s ease;
+  transition: width 0.22s ease, height 0.22s ease, border-color 0.22s ease, background 0.22s ease, opacity 0.18s ease;
 }
 .cursor-ring.is-hover {
   width: 52px;
   height: 52px;
   border-color: rgba(96, 165, 250, 0.85);
   background: rgba(59, 130, 246, 0.08);
+}
+
+/* Laser targeting reticle — the break-cursor over the shatterable hero
+   asteroids. The outer element follows the pointer (translate set in JS); the
+   inner SVG scales for the lock-on snap; the ring group spins. Shown only when
+   the layer has `.is-break` (set from the asteroid's 'break' cursor3d event). */
+.cursor-reticle {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 40px;
+  height: 40px;
+  pointer-events: none;
+  z-index: 10001;
+  opacity: 0;
+  transition: opacity 0.16s ease;
+  filter: drop-shadow(0 0 4px rgba(59, 130, 246, 0.8));
+  will-change: transform, opacity;
+}
+.cursor-layer.is-break .cursor-reticle {
+  opacity: 1;
+}
+/* Hand off cleanly: dot + ring fade out while the reticle locks on. */
+.cursor-layer.is-break .cursor-dot,
+.cursor-layer.is-break .cursor-ring {
+  opacity: 0;
+}
+.reticle-svg {
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  transform: scale(1.55); /* relaxed; snaps to 1 on lock-on */
+  transition: transform 0.22s cubic-bezier(0.2, 1.5, 0.34, 1);
+}
+.cursor-layer.is-break .reticle-svg {
+  transform: scale(1);
+}
+.reticle-ring {
+  fill: none;
+  stroke: var(--color-site-accent-bright);
+  stroke-width: 3;
+  stroke-dasharray: 36 20.5; /* four arcs + gaps around r=36 */
+  stroke-linecap: round;
+}
+.reticle-spin {
+  transform-origin: 50% 50%;
+  animation: reticle-spin 4.5s linear infinite;
+}
+.reticle-ticks line {
+  stroke: var(--color-site-accent);
+  stroke-width: 3;
+  stroke-linecap: round;
+}
+.reticle-core {
+  fill: var(--color-site-accent-bright);
+}
+@keyframes reticle-spin {
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 /* ── Keyboard focus — visible, on-brand ── */
@@ -176,7 +237,14 @@ body {
   .site-main .pricing-note,
   .site-main .team-note,
   .site-main .section-title,
-  .site-main .trust-strip {
+  .site-main .trust-strip,
+  /* The Home payoff + the closing CTA bands are opaque, full-viewport tube
+     sections — the 3D canvas is fully covered there, so they own their pointer
+     events (nothing visible behind to fall through to) and the tubes'
+     click-to-randomize can fire. The .tubes-wrap/.tubes-canvas inside keep
+     their own pointer-events:none, so the click reaches the section itself. */
+  .site-main .home-payoff,
+  .site-main .cta-band {
     pointer-events: auto;
   }
 }
@@ -396,6 +464,10 @@ body {
 
 .home-payoff {
   position: relative;
+  /* Own stacking context, so the tubes background (z-index:-1) is contained:
+     above this section's gradient, below the payoff text — never slipping behind
+     other page layers. */
+  isolation: isolate;
   min-height: 100vh;
   display: flex;
   flex-direction: column;
@@ -412,6 +484,61 @@ body {
 }
 .home-payoff .lead {
   max-width: 52ch;
+}
+
+/* ── Neon-tubes background, scoped to the payoff section (Item 5) ──
+   The wrap (live canvas) or fallback (static gradient) fills the section at
+   z-index:-1 — behind the text, above the section's own gradient — and is
+   pointer-events:none so clicks fall through to the section, which randomizes
+   the tube colors. Both carry a subtle gradient so there's always something
+   tasteful behind the text when the canvas is absent (touch / reduced-motion /
+   throttled hardware, or before the bundle has loaded). */
+.tubes-wrap,
+.tubes-fallback {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  overflow: hidden;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse 70% 55% at 28% 32%, rgba(59, 130, 246, 0.16), transparent 70%),
+    radial-gradient(ellipse 60% 50% at 76% 72%, rgba(139, 92, 246, 0.14), transparent 72%);
+}
+.tubes-canvas {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+/* Keep the payoff copy legible where a bright tube passes behind it. */
+.home-payoff .eyebrow,
+.home-payoff .display-xl,
+.home-payoff .lead {
+  text-shadow: 0 2px 18px rgba(5, 7, 14, 0.85);
+}
+
+/* The "click to change the colors" hint under the tube sections' CTAs. Shown
+   only where the live canvas actually runs — same gates as TubesBackground
+   (fine hover pointer, motion OK); touch / reduced-motion get the static
+   gradient and no hint. Clicking the hint itself counts as clicking the
+   section, so it randomizes the colors too. */
+.tubes-hint {
+  display: none;
+  font-size: 0.78rem;
+  letter-spacing: 0.05em;
+  color: var(--color-site-fore-dim);
+  animation: tubes-hint-pulse 3.2s ease-in-out infinite;
+}
+@media (hover: hover) and (pointer: fine) {
+  .tubes-hint { display: block; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .tubes-hint { display: none; }
+}
+@keyframes tubes-hint-pulse {
+  0%, 100% { opacity: 0.55; }
+  50% { opacity: 1; }
 }
 
 .cta-row {
@@ -696,6 +823,12 @@ body {
   .cursor-ring {
     transition: none;
   }
+  .reticle-svg {
+    transition: none;
+  }
+  .reticle-spin {
+    animation: none;
+  }
   html {
     scroll-behavior: auto;
   }
@@ -809,15 +942,37 @@ body {
   align-items: flex-start;
   gap: 0.75rem;
 }
-.page-cta {
-  margin-top: 2rem;
+/* ── Closing CTA "moment" — Work / Services / Pricing / About ──
+   A full-height, opaque neon-tubes section that closes a content page: the same
+   tube effect as the Home payoff (`.tubes-wrap` fills it at z-index:-1), reused
+   here as a per-page call to action. It's opaque + full-viewport on purpose, so
+   the tubes own their region and the route's fixed focal 3D model never bleeds
+   through — mirrors the `.home-payoff` tube-hosting contract. */
+.cta-band {
+  position: relative;
+  /* Own stacking context so the tubes background (z-index:-1) stays contained:
+     above this section's gradient, below the CTA copy. */
+  isolation: isolate;
+  min-height: 100vh;
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
-  gap: 1rem;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  gap: 1.5rem;
+  padding: 6rem clamp(1.25rem, 5vw, 3rem);
+  /* Fully opaque base (a faint blue glow on top) so nothing behind bleeds through. */
+  background:
+    radial-gradient(ellipse 80% 60% at 50% 38%, rgba(59, 130, 246, 0.1), transparent 70%),
+    #05070e;
 }
-.page-cta p {
-  color: var(--color-site-fore-dim);
+.cta-band .display-lg {
+  max-width: 18ch;
+}
+/* Keep the copy legible where a bright tube passes behind it. */
+.cta-band .eyebrow,
+.cta-band .display-lg {
+  text-shadow: 0 2px 18px rgba(5, 7, 14, 0.85);
 }
 
 /* Work */

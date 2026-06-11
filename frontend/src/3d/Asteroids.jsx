@@ -4,6 +4,7 @@ import { useGLTF } from "@react-three/drei";
 import * as THREE from "three";
 import { WIND, stormIntensity, bandY } from "../data/stormConfig";
 import { playCrack } from "./sfx";
+import { setCursor3d } from "./useHover3d";
 
 // Caps on live debris — fixed-capacity pools double as the performance cap.
 const FRAG_CAP = 30;
@@ -102,6 +103,15 @@ export default function Asteroids({ url = "/models/Asteroid.glb", count = 5, pro
     if (baseRef.current) baseRef.current.userData.onTap = (hit) => { if (hit.instanceId != null) shatter(hit.instanceId); };
   }, [shatter]);
 
+  // Desktop hover: only the cursor reacts. While a rock is under the pointer the
+  // custom cursor flips to the laser targeting reticle ('break') so people sense
+  // it can be shattered — the rock itself stays unchanged (the R9 grow + rim-halo
+  // hint was removed in R13 at the owner's request).
+  const onOver = useCallback((e) => { e.stopPropagation(); if (e.instanceId == null) return; setCursor3d(true, "break"); }, []);
+  const onOut = useCallback((e) => { e.stopPropagation(); setCursor3d(false, "break"); }, []);
+  // Release the reticle if the field unmounts mid-hover (e.g. route change).
+  useEffect(() => () => setCursor3d(false, "break"), []);
+
   // Hide the (initially empty) fragment + spark pools before the first paint, so
   // they never flash as a clump of full-size instances at the origin.
   useLayoutEffect(() => {
@@ -192,6 +202,8 @@ export default function Asteroids({ url = "/models/Asteroid.glb", count = 5, pro
         args={[geometry, material, count]}
         frustumCulled={false}
         onClick={(e) => { e.stopPropagation(); if (e.instanceId != null) shatter(e.instanceId); }}
+        onPointerOver={onOver}
+        onPointerOut={onOut}
       />
       <instancedMesh ref={fragRef} args={[geometry, material, FRAG_CAP]} frustumCulled={false} />
       <instancedMesh ref={sparkRef} args={[sparkGeo, sparkMat, SPARK_CAP]} frustumCulled={false} />

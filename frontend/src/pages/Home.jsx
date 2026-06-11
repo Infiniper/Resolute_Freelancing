@@ -4,6 +4,7 @@ import { motion } from 'framer-motion'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import Seo from '../components/Seo'
+import TubesBackground from '../components/TubesBackground'
 import useReducedMotion from '../hooks/useReducedMotion'
 import { signals } from '../scenes/signals'
 import { TRUST_STRIP } from '../data/content'
@@ -21,11 +22,16 @@ function Payoff() {
       </p>
       <div className="cta-row">
         <Link to="/work" className="btn-primary">See Our Work</Link>
-        <Link to="/contact" className="btn-ghost">Hire Us</Link>
+        <Link to="/services" className="btn-ghost">Explore Services</Link>
       </div>
       <ul className="trust-strip" aria-label="Selected credentials">
         {TRUST_STRIP.map((item) => <li key={item}>{item}</li>)}
       </ul>
+      {/* Pointer-only easter-egg hint — CSS shows it only where the live tube
+          canvas can actually run (fine pointer + motion OK). */}
+      <p className="tubes-hint" aria-hidden="true">
+        The tubes follow your cursor — click anywhere to change their colors.
+      </p>
     </>
   )
 }
@@ -70,6 +76,7 @@ export default function Home() {
       <>
         <Seo title={null} />
         <section className="home-payoff">
+          <TubesBackground />
           <Payoff />
         </section>
       </>
@@ -104,6 +111,7 @@ export default function Home() {
         viewport={{ amount: 0.4 }}
         transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
       >
+        <TubesBackground />
         <Payoff />
       </motion.section>
     </>
