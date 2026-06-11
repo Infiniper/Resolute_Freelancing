@@ -22,7 +22,7 @@ function makeSeed() {
     spin: 0.1 + Math.random() * 0.35, drift: 0.4 + Math.random() * 0.9,
     scale: 0.18 + Math.random() * 0.5,
     swirlAmp: 0.3 + Math.random() * 0.6, swirlFreq: 0.3 + Math.random(), phase: Math.random() * 6,
-    alive: true, respawn: 0, hoverT: 0,
+    alive: true, respawn: 0,
   };
 }
 
@@ -39,9 +39,6 @@ export default function Asteroids({ url = "/models/Asteroid.glb", count = 5, pro
   const baseRef = useRef();
   const fragRef = useRef();
   const sparkRef = useRef();
-  const glowRef = useRef();          // single inverted-hull halo that rides the hovered rock
-  const hoveredRef = useRef(-1);     // instanceId currently under the pointer (-1 = none)
-  const glowIdx = useRef(-1);        // rock the halo is on (held through its fade-out)
 
   // Pull the first mesh's geometry + material out of the model (shared/cached by
   // useGLTF — never disposed here). Fragments reuse them; sparks get their own.
@@ -57,16 +54,6 @@ export default function Asteroids({ url = "/models/Asteroid.glb", count = 5, pro
     [],
   );
   useEffect(() => () => { sparkGeo.dispose(); sparkMat.dispose(); }, [sparkGeo, sparkMat]);
-
-  // Hover halo: a soft additive shell drawn from the rock's own geometry but
-  // inverted (BackSide), so the rock occludes its middle and only a glowing brand-
-  // blue rim shows — Bloom turns it into a soft "about to break" glow. Cheap
-  // MeshBasic; its opacity is ramped per frame.
-  const glowMat = useMemo(
-    () => new THREE.MeshBasicMaterial({ color: "#7db4ff", side: THREE.BackSide, transparent: true, opacity: 0, blending: THREE.AdditiveBlending, depthWrite: false }),
-    [],
-  );
-  useEffect(() => () => glowMat.dispose(), [glowMat]);
 
   const seeds = useMemo(() => Array.from({ length: count }, makeSeed), [count]);
   const frags = useMemo(() => Array.from({ length: FRAG_CAP }, () => ({ active: false })), []);
@@ -116,14 +103,12 @@ export default function Asteroids({ url = "/models/Asteroid.glb", count = 5, pro
     if (baseRef.current) baseRef.current.userData.onTap = (hit) => { if (hit.instanceId != null) shatter(hit.instanceId); };
   }, [shatter]);
 
-  // Desktop hover hint: track the rock under the pointer (per-instance via
-  // instanceId) and swap the cursor to the laser targeting reticle ('break'), so
-  // people sense a rock can be shattered. The grow + glow themselves run in
-  // useFrame. (instancedMesh is one object, so moving between rocks fires
-  // onPointerMove — not over/out — hence tracking the live instanceId in onMove.)
-  const onOver = useCallback((e) => { e.stopPropagation(); if (e.instanceId == null) return; hoveredRef.current = e.instanceId; setCursor3d(true, "break"); }, []);
-  const onMove = useCallback((e) => { if (e.instanceId != null) hoveredRef.current = e.instanceId; }, []);
-  const onOut = useCallback((e) => { e.stopPropagation(); hoveredRef.current = -1; setCursor3d(false, "break"); }, []);
+  // Desktop hover: only the cursor reacts. While a rock is under the pointer the
+  // custom cursor flips to the laser targeting reticle ('break') so people sense
+  // it can be shattered — the rock itself stays unchanged (the R9 grow + rim-halo
+  // hint was removed in R13 at the owner's request).
+  const onOver = useCallback((e) => { e.stopPropagation(); if (e.instanceId == null) return; setCursor3d(true, "break"); }, []);
+  const onOut = useCallback((e) => { e.stopPropagation(); setCursor3d(false, "break"); }, []);
   // Release the reticle if the field unmounts mid-hover (e.g. route change).
   useEffect(() => () => setCursor3d(false, "break"), []);
 
@@ -144,14 +129,9 @@ export default function Asteroids({ url = "/models/Asteroid.glb", count = 5, pro
     const t = s.clock.elapsedTime;
     const now = performance.now() / 1000;
 
-    const hk = Math.min(1, dt * 12); // frame-rate-independent smoothing for the hover grow/glow
-
     if (baseRef.current) {
       seeds.forEach((p, i) => {
         if (!p.alive && now >= p.respawn) { p.alive = true; p.x = 16; p.baseY = bandY(); }
-        // Ease this rock's hover amount toward 1 only while it's the live, hovered one.
-        const want = p.alive && i === hoveredRef.current ? 1 : 0;
-        p.hoverT += (want - p.hoverT) * hk;
         if (p.alive) {
           p.x += WIND.x * wind * p.drift * dt;
           p.curY = p.baseY + Math.sin(t * p.swirlFreq + p.phase) * p.swirlAmp * (0.4 + intensity * 0.4);
@@ -159,7 +139,7 @@ export default function Asteroids({ url = "/models/Asteroid.glb", count = 5, pro
           if (p.x < -16) { p.x = 16; p.baseY = bandY(); }
           _m.position.set(p.x, p.curY, p.z);
           _m.rotation.set(p.rx, p.ry, p.rz);
-          _m.scale.setScalar(p.scale * (1 + 0.12 * p.hoverT)); // gentle grow on hover
+          _m.scale.setScalar(p.scale);
         } else {
           _m.scale.setScalar(0); // shattered → hidden until respawn (not raycastable)
           _m.position.set(p.x, p.curY, p.z);
@@ -168,22 +148,6 @@ export default function Asteroids({ url = "/models/Asteroid.glb", count = 5, pro
         baseRef.current.setMatrixAt(i, _m.matrix);
       });
       baseRef.current.instanceMatrix.needsUpdate = true;
-    }
-
-    // The halo rides the hovered rock and is held on it through the fade-out.
-    if (hoveredRef.current >= 0) glowIdx.current = hoveredRef.current;
-    if (glowRef.current) {
-      const p = glowIdx.current >= 0 ? seeds[glowIdx.current] : null;
-      const ht = p ? p.hoverT : 0;
-      if (p && ht > 0.002) {
-        glowRef.current.visible = true;
-        glowRef.current.position.set(p.x, p.curY, p.z);
-        glowRef.current.rotation.set(p.rx, p.ry, p.rz);
-        glowRef.current.scale.setScalar(p.scale * (1 + 0.12 * ht) * 1.16);
-        glowMat.opacity = 0.85 * ht;
-      } else {
-        glowRef.current.visible = false;
-      }
     }
 
     if (fragRef.current) {
@@ -239,11 +203,8 @@ export default function Asteroids({ url = "/models/Asteroid.glb", count = 5, pro
         frustumCulled={false}
         onClick={(e) => { e.stopPropagation(); if (e.instanceId != null) shatter(e.instanceId); }}
         onPointerOver={onOver}
-        onPointerMove={onMove}
         onPointerOut={onOut}
       />
-      {/* Hover halo — a single inverted-hull copy that rides the hovered rock. */}
-      <mesh ref={glowRef} geometry={geometry} material={glowMat} visible={false} frustumCulled={false} />
       <instancedMesh ref={fragRef} args={[geometry, material, FRAG_CAP]} frustumCulled={false} />
       <instancedMesh ref={sparkRef} args={[sparkGeo, sparkMat, SPARK_CAP]} frustumCulled={false} />
     </>
