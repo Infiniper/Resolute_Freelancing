@@ -15,7 +15,7 @@ export default function Footer() {
       <div className="footer-inner">
         <div className="footer-brand">
           <p className="footer-mark">The Resolutes</p>
-          <p className="footer-tag">Resolute by name. Unmoved by the storm.</p>
+          <p className="footer-tag">Unmoved by the storm.</p>
         </div>
 
         <nav className="footer-nav" aria-label="Footer">

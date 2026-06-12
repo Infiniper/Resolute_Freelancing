@@ -1,7 +1,12 @@
 export const WIND = { x: -1, y: -0.12 };              // right → left
-export const S_BASE = { x: 4.15, y: -0.4, z: -0.1 };  // "s" resting slot (your tuned value)
+export const S_BASE = { x: 4.3, y: -0.42, z: -0.1 };  // "s" resting slot (your tuned value)
+
+// The "s" tears loose at this storm progress and is seated in "urprise!" at
+// exactly 1. HomeScene's flight, CameraRig's pan and Home's snap-to-landing
+// (the scroll never rests mid-flight) all read this one value.
+export const S_FLY_START = 0.5;
 export const URPRISE_Y = -16;                          // how far below the reveal sits
-export const S_LAND = { x: -3.7, y: URPRISE_Y, z: 0 };  // where the "s" lands in "urprise" (right edge meets the "u")
+export const S_LAND = { x: -3.08, y: URPRISE_Y, z: 0 };  // where the "s" lands in "urprise" (right edge meets the "u")
 export const NAME_BASE_Y = -0.4;                       // resting Y of "The Resolute"
 
 // Hero keep-out: a box (in the hero group's local space, pre-heroScale) around

@@ -234,6 +234,7 @@ body {
   .site-main .glass-card,
   .site-main .page-header,
   .site-main .pricing-toggle,
+  .site-main .pricing-perk,
   .site-main .pricing-note,
   .site-main .team-note,
   .site-main .section-title,
@@ -368,7 +369,9 @@ body {
 .display-xl {
   font-family: var(--font-display);
   font-weight: 600;
-  font-size: clamp(2.4rem, 7vw, 5.2rem);
+  /* Sized so the payoff headline ("A website doesn't have to be boring.")
+     stays on a single line down to tablet widths. */
+  font-size: clamp(1.8rem, 4.5vw, 3.6rem);
   line-height: 1.02;
   letter-spacing: -0.02em;
   color: var(--color-site-fore);
@@ -387,7 +390,7 @@ body {
   font-size: clamp(1rem, 1.6vw, 1.2rem);
   line-height: 1.6;
   color: var(--color-site-fore-dim);
-  max-width: 42ch;
+  max-width: 55ch;
 }
 
 /* ═══════════════════════════════════════
@@ -527,7 +530,7 @@ body {
   display: none;
   font-size: 0.78rem;
   letter-spacing: 0.05em;
-  color: var(--color-site-fore-dim);
+  color: #fff;
   animation: tubes-hint-pulse 3.2s ease-in-out infinite;
 }
 @media (hover: hover) and (pointer: fine) {
@@ -1075,6 +1078,26 @@ body {
 }
 
 /* Pricing */
+/* The free-maintenance perk pill — a small accent callout above the toggle.
+   display:flex (not inline-flex) so the inline-flex .pricing-toggle below it
+   starts on its own line. */
+.pricing-perk {
+  display: flex;
+  width: fit-content;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  padding: 0.55rem 1rem;
+  border: 1px solid rgba(59, 130, 246, 0.35);
+  border-radius: 999px;
+  background: rgba(59, 130, 246, 0.1);
+  font-size: 0.85rem;
+  color: var(--color-site-fore);
+}
+.pricing-perk strong {
+  font-weight: 600;
+  color: var(--color-site-accent-bright);
+}
+
 .pricing-toggle {
   display: inline-flex;
   gap: 0.25rem;

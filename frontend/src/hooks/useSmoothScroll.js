@@ -13,7 +13,11 @@ export default function useSmoothScroll() {
     // Respect reduced motion — fall back to native scrolling, no smoothing.
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
 
-    const lenis = new Lenis({ duration: 1.2 })
+    // 0.9 keeps the glide but shortens the post-wheel easing tail — the storm's
+    // snap-to-landing can only kick in once this tail has decayed (ScrollTrigger
+    // treats the scroll as moving until velocity < 10px/s), so a longer duration
+    // here reads as lag before the auto-landing takes over.
+    const lenis = new Lenis({ duration: 0.1 })
     signals.lenis = lenis
     if (import.meta.env.DEV) window.__lenis = lenis // dev-only handle for debugging/QA
     lenis.on('scroll', ScrollTrigger.update)

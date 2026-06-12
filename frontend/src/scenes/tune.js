@@ -8,5 +8,5 @@ import { S_LAND } from '../data/stormConfig'
 // `signals`, since the panel lives in the DOM tree and the word in the canvas.
 export const tune = {
   sLandX: S_LAND.x,   // x where the falling "s" lands (its right edge meets "u")
-  urpriseX: -3.2,     // x of the left-anchored "urprise!" group
+  urpriseX: -2.28,     // x of the left-anchored "urprise!" group
 }

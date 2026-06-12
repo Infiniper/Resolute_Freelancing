@@ -23,6 +23,10 @@ export default function Pricing() {
           lead="Honest starting ranges. Switch the market to see what fits."
         />
 
+        <p className="pricing-perk">
+          Every project includes <strong> &nbsp; 6 months of free maintenance.</strong>
+        </p>
+
         <div className="pricing-toggle" role="group" aria-label="Choose pricing market">
           <button
             type="button"
