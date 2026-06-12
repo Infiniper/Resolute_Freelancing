@@ -8,17 +8,17 @@ import TubesBackground from '../components/TubesBackground'
 import useReducedMotion from '../hooks/useReducedMotion'
 import { signals } from '../scenes/signals'
 import { TRUST_STRIP } from '../data/content'
+import { S_FLY_START } from '../data/stormConfig'
 
 gsap.registerPlugin(ScrollTrigger)
 
 function Payoff() {
   return (
     <>
-      <p className="eyebrow">The storm couldn’t move us — only the “s” gave way.</p>
-      <h1 className="display-xl">A website doesn’t have to be boring.</h1>
+      <p className="eyebrow">The storm couldn’t move us, only the “s” gave way!</p>
+      <h1 className="display-xl">Make them stare at the beautiful chaos!</h1>
       <p className="lead">
-        We’re The Resolutes — frontend, design, full-stack and AI/ML, building
-        experiences most studios can’t. What you just saw is the demo.
+        We’re The Resolutes. Building experiences through code. <br/> Let's Dream, Develop and Disrupt.
       </p>
       <div className="cta-row">
         <Link to="/work" className="btn-primary">See Our Work</Link>
@@ -30,7 +30,7 @@ function Payoff() {
       {/* Pointer-only easter-egg hint — CSS shows it only where the live tube
           canvas can actually run (fine pointer + motion OK). */}
       <p className="tubes-hint" aria-hidden="true">
-        The tubes follow your cursor — click anywhere to change their colors.
+        The tubes follow your cursor, click anywhere to change their colors.
       </p>
     </>
   )
@@ -54,6 +54,27 @@ export default function Home() {
       end: 'bottom bottom',
       scrub: true,
       onUpdate: (self) => { signals.homeScroll = self.progress },
+      // The scroll may never rest while the "s" is mid-flight (progress
+      // S_FLY_START→1): if the user stops scrolling there, auto-scroll the
+      // rest of the way until the "s" seats into "urprise!" — or, if they
+      // were heading back up, return it to its slot. Outside that window the
+      // function returns `value` unchanged, which GSAP treats as "no snap".
+      // New wheel/touch input kills the glide (the scroll tween self-cancels
+      // on foreign movement), and ScrollTrigger only snaps while the scroll
+      // is inside this trigger's range — it can never pull the page back up
+      // from the payoff. The DOM is a full-viewport sticky for the whole
+      // track, so the glide reads as the animation finishing itself, not as
+      // the page scrolling.
+      snap: {
+        snapTo: (value, self) =>
+          value > S_FLY_START && value < 1
+            ? (self.direction < 0 ? S_FLY_START : 1)
+            : value,
+        duration: { min: 0.4, max: 1.6 },
+        ease: 'power2.inOut',
+        delay: 0.01,
+        inertia: false,
+      },
     })
     const revealST = ScrollTrigger.create({
       trigger: payoffRef.current,

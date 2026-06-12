@@ -106,8 +106,8 @@ export default function WorldEnvironment({ mobile }) {
       </Suspense>
 
       {/* Base star field + a sparser layer of larger, brighter "hero" stars. */}
-      <Stars radius={80} depth={50} count={mobile ? 1200 : 3000} factor={3.2} saturation={0} fade speed={0.6} />
-      <Stars radius={90} depth={40} count={mobile ? 200 : 500} factor={7} saturation={0} fade speed={0.4} />
+      <Stars radius={80} depth={50} count={mobile ? 2200 : 5200} factor={3.2} saturation={0} fade speed={0.6} />
+      <Stars radius={90} depth={40} count={mobile ? 380 : 900} factor={7} saturation={0} fade speed={0.4} />
 
       {/* Volumetric storm sky — the CLOUD_BANKS above. MeshBasic (unlit) so
           the dark tints read literally under the world's dim lights; their own

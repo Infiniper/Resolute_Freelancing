@@ -156,11 +156,7 @@ export const CREDENTIALS = [
 ]
 
 export const TRUST_STRIP = [
-  'Samsung AI',
-  'Amazon ML Challenge · AIR 1122',
-  'VINDICATE Research',
-  '240+ DSA',
-  'Hackathon Winners',
+  'Design & Creatives', 'Web Development', 'App Development', 'AI/ML', 'Tutoring'
 ]
 
 export const CONTACT = {

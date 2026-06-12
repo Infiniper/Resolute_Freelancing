@@ -4,7 +4,7 @@ import * as THREE from 'three'
 import gsap from 'gsap'
 import { WAYPOINTS, fallbackWaypoint } from './waypoints'
 import { signals } from './signals'
-import { lerp, range, easeInOut, URPRISE_Y } from '../data/stormConfig'
+import { lerp, range, easeInOut, S_FLY_START, URPRISE_Y } from '../data/stormConfig'
 
 // Reused scratch vectors — never allocate inside useFrame.
 const _pos = new THREE.Vector3()
@@ -22,8 +22,8 @@ function resolveTarget(route, outPos, outLook) {
     const p = signals.homeScroll
     const reveal = signals.homeReveal
     const sc = signals.heroScale
-    const peak = range(p, 0.35, 0.55)
-    const fly = range(p, 0.55, 1.0)
+    const peak = range(p, 0.35, S_FLY_START)
+    const fly = range(p, S_FLY_START, 1.0)
     const e = easeInOut(fly)
     const shake = peak * 0.22 * (1 - fly)
     const past = 1 - reveal   // 0 at rest → 1 once the payoff has fully revealed

@@ -5,7 +5,7 @@ import { signals } from './signals'
 import { tune } from './tune'
 import {
   lerp, range, easeInOut, stormIntensity, clamp01,
-  S_BASE, S_LAND, URPRISE_Y, NAME_BASE_Y,
+  S_BASE, S_LAND, S_FLY_START, URPRISE_Y, NAME_BASE_Y,
 } from '../data/stormConfig'
 import WindParticles from '../3d/WindParticles'
 import Asteroids from '../3d/Asteroids'
@@ -49,8 +49,8 @@ function HomeDirector({ sceneRef, nameRef, sRef, ambientRef, urpriseRef, nameMat
     const p = signals.homeScroll
     const reveal = signals.homeReveal
     const build = range(p, 0.0, 0.35)
-    const peak = range(p, 0.35, 0.55)
-    const fly = range(p, 0.55, 1.0)
+    const peak = range(p, 0.35, S_FLY_START)
+    const fly = range(p, S_FLY_START, 1.0)
     const e = easeInOut(fly)
     const tremor = (build + peak) * 0.05 * (1 - fly)
     const calm = (1 - build * 0.6) * (1 - fly)
