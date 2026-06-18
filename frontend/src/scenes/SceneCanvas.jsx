@@ -94,6 +94,22 @@ export default function SceneCanvas({ route }) {
       />
 
       <WorldEnvironment mobile={mobile} />
+
+      {/* Interior-route key lighting. Home brings its own bright rig (see
+          HomeScene) and deliberately dims the world for the storm; the other
+          routes were lit only by WorldEnvironment's faint ambient/hemisphere,
+          so their focal GLB models read as "an object in a dark room". These
+          lift just the interior scenes (gated off Home so the storm stays dark).
+          OWNER: nudge intensities if a model looks too bright/dim. */}
+      {route !== '/' && (
+        <group>
+          <ambientLight intensity={0.5} color="#aac4ff" />
+          <hemisphereLight intensity={0.38} color="#cfe0ff" groundColor="#0a0f1e" />
+          <directionalLight position={[10, 14, 18]} intensity={1.8} color="#dcebff" />
+          <directionalLight position={[-12, -4, 8]} intensity={0.55} color="#3b82f6" />
+        </group>
+      )}
+
       <CameraRig route={route} />
       <SceneManager route={route} mobile={mobile} />
       <TapRaycaster />

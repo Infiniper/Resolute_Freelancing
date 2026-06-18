@@ -908,42 +908,165 @@ body {
   color: var(--color-site-fore);
 }
 
-/* Services */
-.card-grid {
-  list-style: none;
+/* ═══════════════════════════════════════
+   Services — 60/40 split: reverse-stacking deck (left) + 3D model (right)
+   ═══════════════════════════════════════ */
+.services-page {
+  position: relative;
+  z-index: 1;
+  min-height: 100vh;
+  /* No top padding: the pinned wrapper (desktop) / list wrapper (mobile) sit at
+     the page top so the pin can engage at scroll 0, and each owns the nav
+     clearance internally. Minimal left gutter, full width so the left 60% column
+     — and the deck inside it — occupies well over half the screen. */
+  padding: 0 clamp(1rem, 3vw, 2.25rem) 0;
+}
+.services-layout {
   display: grid;
-  /* Two compact cards per row, held to the left so the right-hand negative
-     space stays open for the wandering 3D satellite. */
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-columns: 1fr;
   gap: 1rem;
-  max-width: 38rem;
 }
-.card-grid > li {
-  display: flex;
+/* Desktop: LEFT 60% deck / RIGHT 40% reserved for the fixed 3D canvas. */
+@media (min-width: 1024px) {
+  .services-layout {
+    grid-template-columns: 60% 40%;
+    align-items: start;
+  }
 }
+.services-col-cards {
+  min-width: 0;
+}
+/* Tight gap after the lead, so the deck appears right below the header and the
+   whole header + first card fit on screen without being cut. */
+.services-col-cards .page-header {
+  margin-bottom: 1rem;
+}
+/* The right column only reserves the 40% track for the canvas model — it stays
+   empty + pointer-events:none (structural, not re-enabled) so hovers/clicks fall
+   through to the 3D. Hidden where there's no live model (touch/tablet/reduced). */
+.services-col-3d {
+  display: none;
+}
+@media (min-width: 1024px) {
+  .services-col-3d {
+    display: block;
+  }
+}
+
 .tilt {
   width: 100%;
   height: 100%;
   transition: transform 0.2s ease;
   transform-style: preserve-3d;
 }
+
+/* Shared card look (deck + list): image LEFT, content RIGHT. */
 .service-card {
   display: flex;
-  flex-direction: column;
-  gap: 0.7rem;
-  height: 100%;
-  padding: 1.25rem;
+  flex-direction: row;
+  padding: 0;
+  overflow: hidden;
   transition: border-color 0.3s ease, box-shadow 0.3s ease;
 }
 .service-card:hover {
   border-color: rgba(59, 130, 246, 0.5);
   box-shadow: 0 10px 40px rgba(59, 130, 246, 0.16);
 }
+/* Left media panel: a relevant photo (object-cover) over a gradient wash; the
+   inline line-art (`svg`) sits behind it as the fallback when the photo is
+   missing or fails to load. */
+.service-media {
+  position: relative;
+  flex: 0 0 42%;
+  min-width: 8rem;
+  overflow: hidden;
+  display: grid;
+  place-items: center;
+  color: var(--color-site-accent-bright);
+  border-right: 1px solid var(--color-site-rule);
+  background:
+    radial-gradient(120% 120% at 30% -10%, rgba(96, 165, 250, 0.2), transparent 60%),
+    linear-gradient(135deg, rgba(59, 130, 246, 0.18), rgba(15, 20, 35, 0.55));
+}
+.service-media svg {
+  width: 44%;
+  max-width: 6rem;
+  height: auto;
+  filter: drop-shadow(0 0 10px rgba(59, 130, 246, 0.35));
+}
+.service-photo {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.service-card-body {
+  flex: 1 1 auto;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 1.1rem 1.4rem;
+}
 .service-card-top {
   display: flex;
   justify-content: space-between;
-  align-items: flex-start;
+  align-items: center;
   gap: 0.75rem;
+}
+.service-index {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 0.95rem;
+  letter-spacing: 0.04em;
+  color: var(--color-site-accent-bright);
+}
+.service-index-total {
+  color: var(--color-site-fore-faint);
+}
+.service-blurb {
+  font-size: 0.9rem;
+  line-height: 1.5;
+  color: var(--color-site-fore-dim);
+}
+
+/* ── Desktop reverse-stacking deck ──
+   `.services-pin` (header + deck) is pinned from the page top, so the deck
+   un-stacks on the first scroll. Its top padding clears the fixed nav and rides
+   with the pin. Deeper cards are pushed down + scaled by GSAP so their edges
+   peek; the top card peels off downward on scroll. */
+.services-pin {
+  padding-top: 6rem; /* clears the fixed nav — part of the pinned content */
+  /* Pinned by GSAP (pinType:transform); will-change keeps the pin smooth. */
+  will-change: transform;
+}
+.stack-deck {
+  list-style: none;
+  position: relative;
+  width: 100%;
+  max-width: 60rem; /* OWNER: deck width — on common screens the 60% column is the limiter, so the deck fills it */
+  height: 16rem;    /* OWNER: one horizontal card's height — cards overflow below as they exit */
+}
+.stack-card {
+  position: absolute;
+  inset: 0;
+  height: 100%;
+  /* GSAP drives transform/opacity imperatively; will-change keeps it smooth. */
+  will-change: transform, opacity;
+}
+
+/* ── Mobile / reduced-motion: plain vertical list ── */
+.services-list-wrap {
+  padding-top: 5.5rem; /* clears the fixed nav (no pin in this mode) */
+}
+.services-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  max-width: 60rem;
 }
 /* ── Closing CTA "moment" — Work / Services / Pricing / About ──
    A full-height, opaque neon-tubes section that closes a content page: the same
@@ -1425,10 +1548,34 @@ body {
   .page-header {
     margin-bottom: 1.5rem;
   }
-  /* Single column on phones — the 3D model drops below the cards there, so the
-     grid takes the full width again. */
-  .card-grid {
-    grid-template-columns: 1fr;
+  /* Full width on phones — the 3D model drops behind, so the list fills the column. */
+  .services-list {
     max-width: none;
+  }
+}
+
+/* Phones: stack the list card (image on top, content below) — easier to read than
+   a cramped image-left row on a narrow screen. */
+@media (max-width: 600px) {
+  .services-list .service-card {
+    flex-direction: column;
+  }
+  .services-list .service-media {
+    flex: none;
+    width: 100%;
+    height: 9rem;
+    border-right: 0;
+    border-bottom: 1px solid var(--color-site-rule);
+  }
+}
+
+/* Reduced motion: no live 3D model and no scrubbed deck — collapse to a single
+   full-width list (matches ServicesStack's reduced-motion fallback). */
+@media (prefers-reduced-motion: reduce) {
+  .services-layout {
+    grid-template-columns: 1fr;
+  }
+  .services-col-3d {
+    display: none;
   }
 }

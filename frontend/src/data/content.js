@@ -3,37 +3,58 @@
 // is marked with a `TODO:` comment.
 // ─────────────────────────────────────────────────────────────────────────
 
+// Per service: `blurb` is a client-facing one-liner; `img` is the card photo
+// (1:1 source in /public/services_images, object-cover cropped on the card);
+// `art` is the inline SVG illustration shown as the fallback if the photo fails.
 export const SERVICES = [
   {
     title: 'Web Development',
-    tag: 'High local demand',
-    examples: ['Portfolio sites', 'Business sites', 'React apps', 'E-commerce'],
+    tag: 'Our Craft',
+    blurb: 'Conversion-driven sites and web apps that turn visitors into paying customers.',
+    art: 'web',
+    img: '/services_images/web_dev.png',
+    examples: ['Business sites', 'Portfolio sites', 'React apps', 'E-commerce'],
   },
   {
     title: 'Design & Creatives',
-    tag: 'Quick turnaround',
-    examples: ['Logos', 'Banners', 'Wedding invitations', 'UI/UX mockups'],
-  },
-  {
-    title: 'Coaching & Tutoring',
-    tag: 'Zero setup',
-    examples: ['DSA', 'Web dev', 'ML', 'Resume help'],
+    tag: 'Brand & Visuals',
+    blurb: 'Standout brand visuals that make people stop, look, and remember you.',
+    art: 'design',
+    img: '/services_images/design_creative.png',
+    examples: ['Logos', 'Banners', 'Ads', 'Posters', 'Wedding invitations', 'UI/UX mockups'],
   },
   {
     title: 'Backend & DevOps',
-    tag: 'Full-stack support',
-    examples: ['REST APIs', 'PostgreSQL', 'Docker', 'Render / Supabase'],
+    tag: 'Ships & Scales',
+    blurb: 'Rock-solid APIs and infrastructure that scale cleanly under real-world traffic.',
+    art: 'backend',
+    img: '/services_images/DevOps.png',
+    examples: ['APIs', 'PostgreSQL', 'Docker', 'Cloud Deployment', 'CI/CD', 'Monitoring'],
   },
   {
     title: 'AI & Machine Learning',
-    tag: 'Our biggest edge',
-    examples: ['NLP', 'Text classification', 'Chatbots', 'Fine-tuning', 'Deployment'],
+    tag: 'Smart Systems',
+    blurb: 'Production-grade AI — chatbots and models that ship real results.',
+    art: 'ai',
+    img: '/services_images/AI.png',
+    examples: ['Chatbots', 'Models', 'Deployment'],
   },
   {
     title: 'Data & Analytics',
-    tag: 'Data work',
-    examples: ['Web scraping', 'EDA', 'Dashboards', 'Kaggle'],
+    tag: 'Decisions from Data',
+    blurb: 'Turn messy data into clear dashboards and insights that drive better decisions.',
+    art: 'data',
+    img: '/services_images/decode.png',
+    examples: ['Web scraping', 'EDA', 'Dashboards', 'Data visualization'],
   },
+  {
+    title: 'Coaching & Tutoring',
+    tag: 'Grow',
+    blurb: 'DSA, Web, AI, and other Computer Science Courses.',
+    art: 'coach',
+    img: '/services_images/coaching.png',
+    examples: ['DSA', 'Web Development', 'AI', 'Computer Science'],
+  }
 ]
 
 // Per project: `image` is the poster, `preview` an optional short muted clip
