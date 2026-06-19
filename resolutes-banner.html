@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>The Resolutes — Banner (2 pages, A4)</title>
+<link rel="preconnect" href="https://api.fontshare.com" crossorigin />
+<link href="https://api.fontshare.com/v2/css?f[]=clash-display@400,500,600,700&display=swap" rel="stylesheet" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --ink:#05070e; --ink-2:#080b14;
+    --surface:rgba(15,21,37,.72);
+    --accent:#3b82f6; --bright:#60a5fa; --violet:#8b5cf6; --teal:#22d3ee;
+    --fore:#f1f5f9; --dim:#c4d4e4; --faint:#96afc6; --rule:#1e293b;
+    --display:'Clash Display','Inter',sans-serif;
+    --body:'Inter',system-ui,sans-serif;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html,body{background:#11141d;font-family:var(--body);color:var(--fore);-webkit-font-smoothing:antialiased;}
+
+  /* ── Sheets (A4 portrait) ── */
+  .sheet{
+    width:210mm; height:297mm; margin:5mm auto; position:relative; overflow:hidden;
+    background:
+      radial-gradient(42% 30% at 88% 6%, rgba(59,130,246,.16), transparent 70%),
+      radial-gradient(38% 26% at 6% 84%, rgba(139,92,246,.13), transparent 70%),
+      radial-gradient(30% 22% at 80% 96%, rgba(34,211,238,.10), transparent 70%),
+      linear-gradient(160deg, var(--ink-2) 0%, var(--ink) 55%, #04060c 100%);
+    box-shadow:0 6px 40px rgba(0,0,0,.55);
+    display:flex; flex-direction:column; padding:10mm 10mm 9mm;
+    print-color-adjust:exact; -webkit-print-color-adjust:exact;
+  }
+  .stars,.stars::after{content:'';position:absolute;inset:0;pointer-events:none;background-repeat:no-repeat;}
+  .stars{
+    background-image:
+      radial-gradient(1px 1px at 12% 8%,#cfe1ff 50%,transparent 51%),
+      radial-gradient(1px 1px at 30% 16%,#fff 50%,transparent 51%),
+      radial-gradient(1.5px 1.5px at 52% 6%,#bcd6ff 50%,transparent 51%),
+      radial-gradient(1px 1px at 70% 12%,#fff 50%,transparent 51%),
+      radial-gradient(1px 1px at 90% 22%,#cfe1ff 50%,transparent 51%),
+      radial-gradient(1.5px 1.5px at 8% 38%,#fff 50%,transparent 51%),
+      radial-gradient(1px 1px at 26% 52%,#bcd6ff 50%,transparent 51%),
+      radial-gradient(1px 1px at 84% 44%,#fff 50%,transparent 51%),
+      radial-gradient(1.5px 1.5px at 94% 60%,#cfe1ff 50%,transparent 51%),
+      radial-gradient(1px 1px at 16% 72%,#fff 50%,transparent 51%),
+      radial-gradient(1px 1px at 44% 84%,#bcd6ff 50%,transparent 51%),
+      radial-gradient(1.5px 1.5px at 66% 92%,#fff 50%,transparent 51%),
+      radial-gradient(1px 1px at 88% 80%,#cfe1ff 50%,transparent 51%),
+      radial-gradient(1px 1px at 58% 64%,#fff 50%,transparent 51%),
+      radial-gradient(1px 1px at 38% 30%,#fff 50%,transparent 51%);
+  }
+  .stars::after{
+    background-image:
+      radial-gradient(2px 2px at 76% 8%,rgba(96,165,250,.9) 50%,transparent 51%),
+      radial-gradient(2px 2px at 6% 58%,rgba(96,165,250,.8) 50%,transparent 51%),
+      radial-gradient(2px 2px at 50% 96%,rgba(34,211,238,.8) 50%,transparent 51%),
+      radial-gradient(2px 2px at 96% 36%,rgba(139,92,246,.8) 50%,transparent 51%);
+  }
+  .content{position:relative;z-index:1;display:flex;flex-direction:column;flex:1;min-height:0;}
+
+  /* ── atoms ── */
+  .eyebrow{font-size:11pt;font-weight:600;letter-spacing:.32em;text-transform:uppercase;color:var(--bright);}
+  .micro{font-size:11pt;letter-spacing:.16em;text-transform:uppercase;color:var(--faint);font-weight:500;}
+  .chip{display:inline-block;font-size:10.5pt;font-weight:500;color:var(--dim);border:.35mm solid var(--rule);
+        border-radius:999px;padding:1.1mm 2.8mm;background:rgba(15,21,37,.5);white-space:nowrap;}
+
+  /* ── topbar ── */
+  .topbar{display:flex;align-items:baseline;justify-content:space-between;gap:6mm;}
+  .brand{font-family:var(--display);font-weight:600;font-size:15pt;letter-spacing:.01em;}
+  .brand .dot{color:var(--accent);}
+
+  /* ── PAGE 1 hero ── */
+  .hero{text-align:center;margin-top:9mm;}
+  .hero .eyebrow{display:block;margin-bottom:6mm;}
+  .wordmark{
+    font-family:var(--display);font-weight:700;font-size:50pt;line-height:1;letter-spacing:.005em;
+    color:var(--fore);display:inline-block;white-space:nowrap;position:relative;
+  }
+  .wordmark .lit{color:var(--bright);text-shadow:0 0 6mm rgba(59,130,246,.55);}
+  .wordmark .torn{
+    display:inline-block;color:var(--bright);text-shadow:0 0 6mm rgba(59,130,246,.65);
+    transform:translate(2.4mm,4.4mm) rotate(24deg);transform-origin:30% 70%;
+  }
+  .flightpath{display:block;margin:.5mm auto 0;width:92mm;height:13mm;}
+  .tagline{margin-top:5mm;font-family:var(--display);font-weight:600;font-size:21pt;color:var(--fore);letter-spacing:.005em;}
+  .subline{margin:3.4mm auto 0;max-width:150mm;font-size:13pt;font-weight:500;line-height:1.55;color:var(--dim);}
+  .subline b{color:var(--fore);font-weight:600;}
+
+  /* ── PAGE 1 device showcase (the image) ── */
+  .showcase{
+    flex:1;min-height:0;display:flex;align-items:center;justify-content:center;
+    position:relative;margin:5mm -7mm 3mm;
+  }
+  .showcase::before{
+    content:'';position:absolute;inset:8% 4% 6%;
+    background:radial-gradient(60% 60% at 50% 42%, rgba(59,130,246,.22), rgba(59,130,246,.05) 55%, transparent 72%);
+    filter:blur(2mm);z-index:0;
+  }
+  .showcase img{
+    position:relative;z-index:1;max-width:100%;max-height:100%;width:auto;height:auto;
+    object-fit:contain;
+    filter:drop-shadow(0 10mm 14mm rgba(0,0,0,.55));
+  }
+
+  /* ── PAGE 1 footer CTA ── */
+  .cta{
+    display:flex;align-items:center;justify-content:space-between;gap:5mm;
+    border-top:.35mm solid var(--rule);padding-top:5mm;
+  }
+  .cta-main{font-family:var(--display);font-weight:600;font-size:14.5pt;color:var(--fore);}
+  .cta-main a{color:var(--bright);text-decoration:none;letter-spacing:.01em;}
+  .cta-sub{font-size:12pt;color:var(--dim);text-align:right;line-height:1.5;}
+  .cta-sub .pg{display:inline-block;margin-left:2mm;font-weight:600;color:var(--faint);letter-spacing:.18em;}
+
+  /* ── PAGE 2 header ── */
+  .p2-head{display:flex;justify-content:space-between;align-items:flex-end;gap:8mm;margin-bottom:7mm;}
+  .p2-head .eyebrow{display:block;margin-bottom:2.4mm;}
+  .p2-head h2{font-family:var(--display);font-weight:700;font-size:27pt;line-height:1.02;}
+  .p2-head .right{text-align:right;font-size:12pt;color:var(--dim); max-width: 100mm;line-height:1.55;}
+
+  /* ── PAGE 2 services ── */
+  .services{display:grid;grid-template-columns:1fr 1fr;gap:5mm;}
+  .svc{border:.35mm solid var(--rule);border-radius:2.6mm;background:var(--surface);padding:5.6mm 5mm;}
+  .svc.dev{border-left:.8mm solid var(--accent);}
+  .svc .svc-top{display:flex;justify-content:space-between;align-items:baseline;gap:3mm;margin-bottom:2.4mm;}
+  .svc h3{font-family:var(--display);font-weight:600;font-size:13.5pt;}
+  .svc .tag{font-size:10.5pt;letter-spacing:.14em;text-transform:uppercase;color:var(--bright);white-space:nowrap;}
+  .svc .ex{display:flex;flex-wrap:wrap;gap:1.8mm;}
+
+  .flex-price{
+    margin : 5mm;text-align:center;border:.35mm dashed rgba(96,165,250,.5);border-radius:2.6mm;
+    padding: 3mm 2mm;font-size:12.5pt;color:var(--dim);background:rgba(59,130,246,.06);
+  }
+  .flex-price b{color:var(--fore);font-weight:600;}
+
+  /* ── PAGE 2 big contact band ── */
+  .contact-band{
+    margin-top:auto;display:grid;grid-template-columns:1fr 42mm;gap:9mm;align-items:center;
+    border:.35mm solid var(--rule);border-radius:3.5mm;
+    background:radial-gradient(75% 130% at 100% 0%, rgba(59,130,246,.15), transparent 70%), var(--surface);
+    padding:8mm;
+  }
+  .ct-title{font-family:var(--display);font-weight:600;font-size:16pt;margin-bottom:4.5mm;line-height:1.1;}
+  .ct-title em{font-style:normal;color:var(--bright);}
+  .c-row{display:flex;align-items:center;gap:3.6mm;padding:3mm 0;}
+  .c-ico{width:8mm;height:8mm;flex:0 0 8mm;border-radius:2mm;background:rgba(59,130,246,.14);
+         border:.3mm solid rgba(96,165,250,.4);display:grid;place-items:center;color:var(--bright);}
+  .c-ico svg{width:4.4mm;height:4.4mm;}
+  .c-val{font-size:15pt;font-weight:700;color:var(--fore);letter-spacing:.01em;line-height:1.12;}
+  .c-val.email{font-size:13pt;}
+  .c-sub{font-size:11pt;color:var(--faint);letter-spacing:.08em;text-transform:uppercase;margin-top:.8mm;}
+  .c-extra{margin-top:3.6mm;font-size:11.5pt;color:var(--dim);}
+  .c-extra b{color:var(--fore);font-weight:600;}
+  .qr-block{display:flex;flex-direction:column;align-items:center;gap:2.4mm;}
+  .qr-tile{background:#fff;border-radius:3mm;padding:3mm;width:42mm;height:42mm;display:grid;place-items:center;
+           box-shadow:0 0 0 .6mm rgba(96,165,250,.35),0 0 9mm rgba(59,130,246,.3);}
+  .qr-tile svg{width:100%;height:100%;color:#05070e;display:block;}
+  .qr-cap{text-align:center;}
+  .qr-cap .u{display:block;font-family:var(--display);font-weight:600;font-size:12pt;color:var(--bright);}
+  .qr-cap .m{display:block;font-size:10.5pt;letter-spacing:.14em;text-transform:uppercase;color:var(--faint);margin-top:.8mm;}
+
+  .team-line{margin-top:7mm;text-align:center;font-size:12pt;color:var(--dim);}
+  .team-line b{color:var(--fore);font-weight:600;}
+
+  /* ── shared footer (page 2) ── */
+  .footstrip{
+    margin-top:5mm;display:flex;justify-content:space-between;align-items:center;gap:4mm;
+    border-top:.35mm solid var(--rule);padding-top:4mm;font-size:11.5pt;color:var(--dim);
+  }
+  .footstrip b{color:var(--fore);font-weight:600;}
+  .footstrip .sep{color:var(--rule);}
+
+  /* ── toolbar / print ── */
+  .toolbar{max-width:210mm;margin:8mm auto 0;padding:4mm 6mm;background:#1b2233;color:#cbd5e1;border-radius:3mm;font-size:10.5pt;line-height:1.5;}
+  .toolbar b{color:#fff;}
+  @media print{
+    html,body{background:var(--ink);}
+    .toolbar{display:none;}
+    .sheet{margin:0;box-shadow:none;page-break-after:always;}
+    .sheet:last-of-type{page-break-after:auto;}
+  }
+  @page{size:A4 portrait;margin:0;}
+</style>
+</head>
+<body>
+<div class="toolbar">
+  <b>To export:</b> press <b>Ctrl/Cmd&nbsp;+&nbsp;P</b> → destination &ldquo;Save as PDF&rdquo; → paper size A4 → margins &ldquo;None&rdquo; → enable <b>&ldquo;Background graphics.&rdquo;</b> Two pages export — front &amp; back.
+</div>
+
+<!-- ════════ PAGE 1 — FRONT ════════ -->
+<section class="sheet">
+  <div class="stars"></div>
+  <div class="content">
+    <header class="topbar">
+      <div class="brand">The&nbsp;Resolutes<span class="dot">.</span></div>
+      <div class="micro">Freelance Dev Studio · Working worldwide</div>
+    </header>
+
+    <div class="hero">
+      <span class="eyebrow">Dream · Develop · Disrupt</span>
+      <div class="wordmark">The&nbsp;<span class="lit">Resolutes</span></div>
+      <svg class="flightpath" viewBox="0 0 360 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M268 4 C 282 26, 250 40, 208 50 C 186 55, 158 58, 138 59"
+              stroke="#60a5fa" stroke-opacity="0.7" stroke-width="1.6"
+              stroke-dasharray="1 7" stroke-linecap="round"/>
+        <circle cx="268" cy="4" r="2.4" fill="#60a5fa"/>
+      </svg>
+      <div class="tagline">Your idea, our headache.</div>
+      <p class="subline"><b>Websites, Apps &amp; AI, designed to inspire and built to ship.</b> <br/> Thinking outside the box implies a box exists, <br/> we checked our database, it doesn&rsquo;t.</p>
+    </div>
+
+    <div class="showcase">
+      <!-- <img src="data:image/png;base64, <string>" alt="The Resolutes portfolio shown on laptop and phone" /> -->
+        <img src="banner1.png" alt="The Resolutes portfolio" />
+    </div>
+
+    <footer class="cta">
+      <div class="cta-main">Checkout our works at <a href="https://resolutes.netlify.app">resolutes.netlify.app</a></div>
+      <div class="cta-sub">Service menu &amp; contact on the back&nbsp;&#8599;<span class="pg">01 / 02</span></div>
+    </footer>
+  </div>
+</section>
+
+<!-- ════════ PAGE 2 — BACK ════════ -->
+<section class="sheet">
+  <div class="stars"></div>
+  <div class="content">
+    <header class="p2-head">
+      <div>
+        <!-- <span class="eyebrow">What we do</span> -->
+        <h2>What we do?</h2>
+      </div>
+      <div class="right">Beautiful execution that holds up in production.</div>
+    </header>
+
+    <div class="services">
+      <div class="svc dev">
+        <div class="svc-top"><h3>Web Development</h3><span class="tag">Our Craft</span></div>
+        <div class="ex"><span class="chip">Portfolio Sites</span><span class="chip">Business Sites</span><span class="chip">React Apps</span><span class="chip">E-commerce</span></div>
+      </div>
+      <div class="svc">
+        <div class="svc-top"><h3>Design &amp; Creatives</h3><span class="tag">Brand &amp; visuals</span></div>
+        <div class="ex"><span class="chip">Logos</span><span class="chip">Banners &amp; Posters</span><span class="chip">Invitations (video / image)</span><span class="chip">UI/UX </span></div>
+      </div>
+      <div class="svc dev">
+        <div class="svc-top"><h3>DevOps</h3><span class="tag">Ships &amp; scales</span></div>
+        <div class="ex"><span class="chip">APIs</span><span class="chip">PostgreSQL</span><span class="chip">Docker</span><span class="chip">Cloud Deploys</span></div>
+      </div>
+      <div class="svc dev">
+        <div class="svc-top"><h3>AI &amp; ML</h3><span class="tag">Smart features</span></div>
+        <div class="ex"><span class="chip">Chatbots</span><span class="chip">Fine-Tuning</span><span class="chip">Deployment</span></div>
+      </div>
+      <div class="svc dev">
+        <div class="svc-top"><h3>Data &amp; Analytics</h3><span class="tag">Decisions from data</span></div>
+        <div class="ex"><span class="chip">Web Scraping</span><span class="chip">EDA</span><span class="chip">Dashboards</span></div>
+      </div>
+      <div class="svc">
+        <div class="svc-top"><h3>Coaching &amp; Tutoring</h3><span class="tag">We teach too</span></div>
+        <div class="ex"><span class="chip">DSA</span><span class="chip">Web Dev</span><span class="chip">AI</span><span class="chip">Classes 5&ndash;10</span></div>
+      </div>
+    </div>
+
+    <div class="flex-price">Every project is scoped to you, <b>available at flexible prices</b>, with honest timelines and clear communication from day one.</div>
+
+    <div class="contact-band">
+      <div>
+        <div class="ct-title">To discuss your project, please <em>talk to us.</em></div>
+        <div class="c-row">
+          <span class="c-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z"/></svg></span>
+          <div><div class="c-val">+91 63864 44659</div><div class="c-sub">Call / WhatsApp · Neeraj Kumar</div></div>
+        </div>
+        <div class="c-row">
+          <span class="c-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg></span>
+          <div><div class="c-val">+91 91404 00064</div><div class="c-sub">Call / WhatsApp · Vishwajeet Singh</div></div>
+        </div>
+        <div class="c-row">
+          <span class="c-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg></span>
+          <div><div class="c-val email">infiniper@gmail.com</div><div class="c-sub">Briefs &amp; quotes — we reply fast</div></div>
+        </div>
+        <div class="c-extra">Also perffinity360@gmail.com<b></b> &nbsp;·&nbsp; <b>github.com/infiniper</b></div>
+      </div>
+      <div class="qr-block">
+        <div class="qr-tile"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 29 29" shape-rendering="crispEdges"><path d="M0 0h7v1h-7zM10 0h5v1h-5zM22 0h7v1h-7zM0 1h1v1h-1zM6 1h1v1h-1zM9 1h1v1h-1zM12 1h1v1h-1zM14 1h6v1h-6zM22 1h1v1h-1zM28 1h1v1h-1zM0 2h1v1h-1zM2 2h3v1h-3zM6 2h1v1h-1zM8 2h1v1h-1zM10 2h1v1h-1zM12 2h2v1h-2zM16 2h3v1h-3zM22 2h1v1h-1zM24 2h3v1h-3zM28 2h1v1h-1zM0 3h1v1h-1zM2 3h3v1h-3zM6 3h1v1h-1zM10 3h1v1h-1zM12 3h1v1h-1zM14 3h2v1h-2zM18 3h1v1h-1zM20 3h1v1h-1zM22 3h1v1h-1zM24 3h3v1h-3zM28 3h1v1h-1zM0 4h1v1h-1zM2 4h3v1h-3zM6 4h1v1h-1zM8 4h3v1h-3zM14 4h1v1h-1zM18 4h1v1h-1zM22 4h1v1h-1zM24 4h3v1h-3zM28 4h1v1h-1zM0 5h1v1h-1zM6 5h1v1h-1zM8 5h4v1h-4zM13 5h1v1h-1zM16 5h1v1h-1zM18 5h2v1h-2zM22 5h1v1h-1zM28 5h1v1h-1zM0 6h7v1h-7zM8 6h1v1h-1zM10 6h1v1h-1zM12 6h1v1h-1zM14 6h1v1h-1zM16 6h1v1h-1zM18 6h1v1h-1zM20 6h1v1h-1zM22 6h7v1h-7zM9 7h1v1h-1zM11 7h3v1h-3zM17 7h1v1h-1zM20 7h1v1h-1zM1 8h1v1h-1zM4 8h1v1h-1zM6 8h1v1h-1zM8 8h3v1h-3zM13 8h2v1h-2zM17 8h1v1h-1zM19 8h3v1h-3zM23 8h2v1h-2zM26 8h1v1h-1zM1 9h2v1h-2zM4 9h2v1h-2zM7 9h1v1h-1zM10 9h2v1h-2zM13 9h5v1h-5zM22 9h3v1h-3zM27 9h2v1h-2zM1 10h1v1h-1zM3 10h6v1h-6zM18 10h1v1h-1zM21 10h1v1h-1zM23 10h1v1h-1zM26 10h1v1h-1zM28 10h1v1h-1zM0 11h1v1h-1zM2 11h1v1h-1zM4 11h1v1h-1zM7 11h1v1h-1zM12 11h2v1h-2zM15 11h1v1h-1zM17 11h5v1h-5zM24 11h2v1h-2zM27 11h2v1h-2zM1 12h2v1h-2zM6 12h3v1h-3zM12 12h2v1h-2zM16 12h2v1h-2zM20 12h1v1h-1zM23 12h1v1h-1zM25 12h1v1h-1zM28 12h1v1h-1zM1 13h1v1h-1zM4 13h2v1h-2zM8 13h3v1h-3zM13 13h1v1h-1zM16 13h1v1h-1zM18 13h1v1h-1zM22 13h1v1h-1zM24 13h1v1h-1zM26 13h1v1h-1zM28 13h1v1h-1zM0 14h1v1h-1zM2 14h2v1h-2zM6 14h3v1h-3zM12 14h2v1h-2zM15 14h1v1h-1zM17 14h1v1h-1zM21 14h1v1h-1zM24 14h1v1h-1zM27 14h2v1h-2zM0 15h2v1h-2zM4 15h2v1h-2zM7 15h1v1h-1zM10 15h1v1h-1zM14 15h4v1h-4zM19 15h1v1h-1zM22 15h2v1h-2zM25 15h1v1h-1zM3 16h5v1h-5zM9 16h1v1h-1zM12 16h1v1h-1zM14 16h2v1h-2zM18 16h4v1h-4zM0 17h2v1h-2zM4 17h2v1h-2zM7 17h2v1h-2zM10 17h1v1h-1zM13 17h2v1h-2zM16 17h3v1h-3zM20 17h1v1h-1zM22 17h3v1h-3zM28 17h1v1h-1zM2 18h1v1h-1zM6 18h1v1h-1zM8 18h6v1h-6zM16 18h3v1h-3zM20 18h1v1h-1zM23 18h1v1h-1zM26 18h1v1h-1zM28 18h1v1h-1zM2 19h1v1h-1zM4 19h2v1h-2zM7 19h1v1h-1zM9 19h2v1h-2zM12 19h1v1h-1zM14 19h1v1h-1zM17 19h1v1h-1zM25 19h1v1h-1zM28 19h1v1h-1zM0 20h2v1h-2zM3 20h4v1h-4zM8 20h1v1h-1zM12 20h4v1h-4zM17 20h1v1h-1zM20 20h6v1h-6zM27 20h2v1h-2zM8 21h2v1h-2zM11 21h1v1h-1zM13 21h1v1h-1zM15 21h3v1h-3zM20 21h1v1h-1zM24 21h1v1h-1zM26 21h3v1h-3zM0 22h7v1h-7zM10 22h1v1h-1zM12 22h1v1h-1zM15 22h2v1h-2zM18 22h3v1h-3zM22 22h1v1h-1zM24 22h1v1h-1zM28 22h1v1h-1zM0 23h1v1h-1zM6 23h1v1h-1zM9 23h2v1h-2zM14 23h2v1h-2zM19 23h2v1h-2zM24 23h2v1h-2zM28 23h1v1h-1zM0 24h1v1h-1zM2 24h3v1h-3zM6 24h1v1h-1zM8 24h2v1h-2zM16 24h1v1h-1zM19 24h6v1h-6zM27 24h1v1h-1zM0 25h1v1h-1zM2 25h3v1h-3zM6 25h1v1h-1zM10 25h1v1h-1zM13 25h2v1h-2zM18 25h1v1h-1zM23 25h1v1h-1zM26 25h2v1h-2zM0 26h1v1h-1zM2 26h3v1h-3zM6 26h1v1h-1zM10 26h6v1h-6zM17 26h5v1h-5zM25 26h1v1h-1zM27 26h2v1h-2zM0 27h1v1h-1zM6 27h1v1h-1zM8 27h2v1h-2zM15 27h6v1h-6zM22 27h2v1h-2zM25 27h1v1h-1zM27 27h2v1h-2zM0 28h7v1h-7zM11 28h1v1h-1zM13 28h2v1h-2zM16 28h2v1h-2zM20 28h1v1h-1zM22 28h1v1h-1zM24 28h1v1h-1zM27 28h1v1h-1z" fill="currentColor"/></svg></div>
+        <div class="qr-cap"><span class="u">resolutes.netlify.app</span><span class="m">Scan to see our Works</span></div>
+      </div>
+    </div>
+
+    <div class="team-line"><b>Team Lead: Vishwajeet Singh</b> &amp; <b>Neeraj Kumar,</b> backed by a wider team of developers.</div>
+
+    <footer class="footstrip">
+      <span><b>The Resolutes</b> · Freelance Dev Studio</span>
+      <span class="sep">|</span>
+      <span>Remote-Friendly · Worldwide</span>
+      <span class="sep">|</span>
+      <span>&copy; 2026 The Resolutes</span>
+    </footer>
+  </div>
+</section>
+</body>
+</html>
