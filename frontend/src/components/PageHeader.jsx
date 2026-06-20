@@ -12,14 +12,16 @@ export default function PageHeader({ eyebrow, title, lead }) {
 
   return (
     <header className="page-header">
-      <motion.p
-        className="eyebrow"
-        initial={{ opacity: 0, y: 14 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5, delay: 0.05 }}
-      >
-        {eyebrow}
-      </motion.p>
+      {eyebrow && (
+        <motion.p
+          className="eyebrow"
+          initial={{ opacity: 0, y: 14 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.05 }}
+        >
+          {eyebrow}
+        </motion.p>
+      )}
       <motion.h1
         className="display-lg"
         initial={{ opacity: 0, y: 18, ...clip.initial }}

@@ -41,6 +41,11 @@
 
 html {
   scroll-behavior: auto;
+  /* `clip` is stronger than `hidden` — it disallows any scrollable region in
+     this axis, so a stray child transform (e.g. a Reveal animating in from
+     +x) can't open a horizontal pan on mobile and push the nav-burger off
+     screen. body keeps `overflow-x: hidden` as a fallback for older engines. */
+  overflow-x: clip;
 }
 
 body {
@@ -236,6 +241,7 @@ body {
   .site-main .pricing-toggle,
   .site-main .pricing-perk,
   .site-main .pricing-note,
+  .site-main .pricing-promise,
   .site-main .team-note,
   .site-main .section-title,
   .site-main .trust-strip,
@@ -282,7 +288,8 @@ body {
 .nav-mark {
   font-family: var(--font-display);
   font-weight: 600;
-  font-size: 1.15rem;
+  /* Smaller on phones so the burger never gets crowded off-screen. */
+  font-size: clamp(0.9rem, 3.6vw, 1.15rem);
   letter-spacing: -0.01em;
   color: var(--color-site-fore);
   text-decoration: none;
@@ -521,20 +528,22 @@ body {
   text-shadow: 0 2px 18px rgba(5, 7, 14, 0.85);
 }
 
-/* The "click to change the colors" hint under the tube sections' CTAs. Shown
-   only where the live canvas actually runs — same gates as TubesBackground
-   (fine hover pointer, motion OK); touch / reduced-motion get the static
-   gradient and no hint. Clicking the hint itself counts as clicking the
-   section, so it randomizes the colors too. */
+/* The "click/tap to change colors" hint under the tube sections' CTAs. Shown
+   wherever the live tube canvas runs — i.e. anything except reduced motion
+   (which gets the static gradient and no hint). On touch devices the desktop
+   text is swapped for a tap-friendly line via .tubes-hint-touch. Clicking the
+   hint itself counts as clicking the section, so it randomizes the colors. */
 .tubes-hint {
-  display: none;
+  display: block;
   font-size: 0.78rem;
   letter-spacing: 0.05em;
   color: #fff;
   animation: tubes-hint-pulse 3.2s ease-in-out infinite;
 }
-@media (hover: hover) and (pointer: fine) {
-  .tubes-hint { display: block; }
+.tubes-hint-touch { display: none; }
+@media (pointer: coarse) {
+  .tubes-hint-mouse { display: none; }
+  .tubes-hint-touch { display: inline; }
 }
 @media (prefers-reduced-motion: reduce) {
   .tubes-hint { display: none; }
@@ -1093,7 +1102,10 @@ body {
     #05070e;
 }
 .cta-band .display-lg {
-  max-width: 18ch;
+  /* Keep CTA headlines on a single line (matches the Home payoff feel). */
+  font-size: clamp(1.6rem, 4.2vw, 3.4rem);
+  white-space: nowrap;
+  max-width: 100%;
 }
 /* Keep the copy legible where a bright tube passes behind it. */
 .cta-band .eyebrow,
@@ -1104,16 +1116,35 @@ body {
 /* Work */
 .work-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-  gap: 1.25rem;
+  /* `min(300px, 100%)` keeps the column from being forced ≥300px on a phone
+     narrower than that (which would expand the grid past the viewport — body's
+     `overflow-x: hidden` then clipped it and left a phantom right-side gap). */
+  grid-template-columns: repeat(auto-fill, minmax(min(300px, 100%), 1fr));
+  gap: 1.15rem;
+}
+/* Stretch the Reveal motion.div + the optional <a> wrap so cards in the same
+   row are the same height regardless of outcome length. `min-width: 0` stops
+   any wide nowrap content inside a card (badge text, chips) from blowing the
+   grid track past its 1fr share — the same right-gap fix as above. */
+.work-grid > * {
+  height: 100%;
+  min-width: 0;
+}
+.project-card-link {
+  display: block;
+  height: 100%;
+  color: inherit;
+  text-decoration: none;
 }
 .project-card {
   padding: 0;
   overflow: hidden;
   display: flex;
   flex-direction: column;
+  height: 100%;
   transition: border-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
 }
+.project-card-link:hover .project-card,
 .project-card:hover {
   transform: translateY(-4px);
   border-color: rgba(96, 165, 250, 0.5);
@@ -1122,7 +1153,7 @@ body {
 .project-media {
   position: relative;
   aspect-ratio: 16 / 10;
-  max-height: 190px;
+  max-height: 175px;
   overflow: hidden;
   display: grid;
   place-items: center;
@@ -1150,10 +1181,11 @@ body {
   opacity: 1;
 }
 .project-body {
-  padding: 1.1rem;
+  padding: 0.95rem;
   display: flex;
   flex-direction: column;
-  gap: 0.7rem;
+  gap: 0.65rem;
+  flex: 1 1 auto;
 }
 .project-head {
   display: flex;
@@ -1179,7 +1211,8 @@ body {
 .project-links {
   display: flex;
   gap: 1rem;
-  margin-top: 0.25rem;
+  margin-top: auto;
+  padding-top: 0.25rem;
 }
 .project-link {
   font-size: 0.8rem;
@@ -1284,6 +1317,89 @@ body {
   margin-top: 1.25rem;
   font-size: 0.82rem;
   color: var(--color-site-fore-dim);
+}
+
+/* Category grouping inside the pricing table. The outer <ul> holds groups
+   (no list bullets, no separator); each group has its own subheader and an
+   inner <ul> of rows. */
+.pricing-group {
+  padding: 0.5rem 0;
+}
+.pricing-cat {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 0.78rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--color-site-accent-bright);
+  padding: 1rem 1.5rem 0.5rem;
+  border-bottom: 1px solid var(--color-site-rule);
+  margin-bottom: 0.2rem;
+}
+.pricing-cat-rows {
+  list-style: none;
+}
+/* Anchor row — picks up a subtle accent wash + a "Most picked" pill. */
+.pricing-row.is-popular {
+  background:
+    linear-gradient(90deg, rgba(59, 130, 246, 0.16), rgba(59, 130, 246, 0.04));
+  border-left: 2px solid var(--color-site-accent);
+  padding-left: calc(1.5rem - 2px);
+}
+.pricing-popular {
+  display: inline-block;
+  margin-left: 0.6rem;
+  padding: 0.15rem 0.55rem;
+  border-radius: 999px;
+  background: var(--color-site-accent);
+  color: #fff;
+  font-family: var(--font-sans);
+  font-size: 0.65rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  vertical-align: middle;
+}
+
+/* Add-ons table — same chrome, plus a small subtitle on the heading. */
+.pricing-addons {
+  margin-top: 1.5rem;
+}
+.pricing-addons-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.6rem;
+}
+.pricing-addons-head span {
+  font-family: var(--font-sans);
+  font-weight: 500;
+  font-size: 0.72rem;
+  letter-spacing: 0.04em;
+  text-transform: none;
+  color: var(--color-site-fore-dim);
+}
+
+/* Closing promise — a highlighted accent callout, sits below the pricing note. */
+.pricing-promise {
+  margin-top: 1.5rem;
+  padding: 1.1rem 1.4rem;
+  border: 1px solid rgba(59, 130, 246, 0.45);
+  border-left: 3px solid var(--color-site-accent);
+  border-radius: 0.7rem;
+  background:
+    linear-gradient(90deg, rgba(59, 130, 246, 0.18), rgba(59, 130, 246, 0.06));
+  box-shadow: 0 0 28px rgba(59, 130, 246, 0.18);
+  max-width: 46rem;
+}
+.pricing-promise p {
+  font-size: 0.95rem;
+  line-height: 1.55;
+  color: var(--color-site-fore);
+}
+.pricing-promise strong {
+  color: var(--color-site-accent-bright);
+  font-weight: 600;
 }
 
 /* About */

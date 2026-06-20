@@ -8,12 +8,12 @@
 // `art` is the inline SVG illustration shown as the fallback if the photo fails.
 export const SERVICES = [
   {
-    title: 'Web Development',
+    title: 'Website Development',
     tag: 'Our Craft',
     blurb: 'Conversion-driven sites and web apps that turn visitors into paying customers.',
     art: 'web',
     img: '/services_images/web_dev.png',
-    examples: ['Business sites', 'Portfolio sites', 'React apps', 'E-commerce'],
+    examples: ['Business Sites', 'Portfolio Sites', 'React Apps', 'E-commerce'],
   },
   {
     title: 'Design & Creatives',
@@ -21,7 +21,7 @@ export const SERVICES = [
     blurb: 'Standout brand visuals that make people stop, look, and remember you.',
     art: 'design',
     img: '/services_images/design_creative.png',
-    examples: ['Logos', 'Banners', 'Ads', 'Posters', 'Wedding invitations', 'UI/UX mockups'],
+    examples: ['Logos', 'Banners', 'Ads', 'Posters', 'Wedding Invitations', 'UI/UX Mockups'],
   },
   {
     title: 'Backend & DevOps',
@@ -62,96 +62,122 @@ export const SERVICES = [
 // (e.g. image: '/work/vindicate.jpg', preview: '/work/vindicate.mp4').
 export const PROJECTS = [
   {
-    title: 'VINDICATE',
+    title: 'Yahora',
     outcome:
-      'Explainable-RL framework generating validity-insured counterfactual explanations (MiniGrid, NSGA-II). 80% efficacy / 92% plausibility.',
-    note: 'Research, under review',
-    stack: ['Python', 'Gymnasium', 'Stable-Baselines3'],
-    image: null,   // TODO: '/work/vindicate.jpg'
-    preview: null, // TODO: '/work/vindicate.mp4' (optional)
-    live: null,    // TODO: live/demo URL
-    repo: null,    // TODO: repository URL
+      'A campus marketplace web app for students to list, discover and pass on second-hand goods — "keep the story going" — with a clean, fully responsive React interface.',
+    note: 'Startup · Marketplace',
+    stack: ['React', 'Vite', 'React Router'],
+    image: '/work/yahora.png',
+    preview: '/work/yahora.mov',
+    live: 'https://yahora.netlify.app/',
+    repo: 'https://github.com/Infiniper/Yahora',
   },
   {
-    title: 'Amazon Product Pricing',
+    title: 'Pankaj Traders',
     outcome:
-      'Multimodal price prediction over 75k products (S-BERT + CLIP + LightGBM, 5-fold CV, 50.85% SMAPE).',
-    note: 'AIR 1122 · Amazon ML Challenge 2025',
-    stack: ['Python', 'LightGBM', 'CLIP'],
-    image: null,   // TODO
-    preview: null, // TODO
-    live: null,    // TODO
-    repo: null,    // TODO
+      'A fast, frontend-only React storefront for a building-materials & construction business — a multi-category product catalog, an image gallery, and a WhatsApp-based enquiry flow.',
+    note: 'Client project',
+    stack: ['React', 'Vite', 'React Router', 'CSS Modules'],
+    image: '/work/pankaj-traders.png',
+    preview: '/work/pankaj-traders.mov',
+    live: 'https://pankajtraders.netlify.app/',
+    repo: 'https://github.com/Neeraj-tech360/pankaj-traders',
   },
   {
-    title: 'Multilingual Hate-Speech Detection',
+    title: 'Sanshi E-Com',
     outcome:
-      'Fine-tuned MuRIL for Hindi/English/Hinglish; Gradio app on Hugging Face Spaces (text, URLs, docs). 80% acc / 0.76 macro-F1.',
-    note: 'Samsung Innovation Campus',
-    stack: ['MuRIL', 'NLP', 'Gradio'],
-    image: null,   // TODO
-    preview: null, // TODO
-    live: null,    // TODO: Hugging Face Space URL
-    repo: null,    // TODO
-  },
-  {
-    title: 'Sanshi',
-    outcome:
-      'Multi-brand e-commerce platform; search / filter / pagination, email notifications, deployed on Render + Supabase.',
+      'A full-stack e-commerce platform for fashion & accessories — a responsive React storefront with dynamic catalogs and category browsing, backed by an Express API and Supabase.',
     note: 'Full-stack product',
-    stack: ['React', 'Node', 'Express', 'PostgreSQL'],
-    image: null,   // TODO
-    preview: null, // TODO
-    live: null,    // TODO
-    repo: null,    // TODO
+    stack: ['React', 'Node', 'Express', 'PostgreSQL', 'Supabase'],
+    image: '/work/sanshi-ecom.png',
+    preview: '/work/sanshi-ecom.mov',
+    live: 'https://sanshiecom.netlify.app/',
+    repo: 'https://github.com/Infiniper/sanshi-ecom',
+  },
+  {
+    title: 'Sanshi H2O',
+    outcome:
+      'A full-stack store with an integrated admin dashboard for managing products and categories — a React storefront, an Express + EJS admin panel, and Supabase.',
+    note: 'Full-stack product',
+    stack: ['React', 'Node', 'Express', 'PostgreSQL', 'Supabase'],
+    image: '/work/sanshi-h2o.png',
+    preview: '/work/sanshi-h2o.mov',
+    live: 'https://sanshih2o.netlify.app/',
+    repo: 'https://github.com/Infiniper/sanshi-h2o',
+  },
+  {
+    title: 'NGCN',
+    outcome:
+      'A research-hub website for a next-gen computing & networking group — a publications catalog, team profiles, a markdown blog and a gallery, on a React 19 + Tailwind frontend with an Express API.',
+    note: 'Research hub',
+    stack: ['React', 'Tailwind CSS', 'Node', 'Express', 'Supabase'],
+    image: '/work/ngcn.png',
+    preview: '/work/ngcn.mov',
+    live: 'https://ngcn.netlify.app/',
+    repo: 'https://github.com/Infiniper/NGCN',
   },
   {
     title: 'QuattroRealm',
     outcome: '2D strategy game built from scratch with OOP and a custom game loop.',
     note: 'Game dev',
     stack: ['C++', 'SFML'],
-    image: null,   // TODO
-    preview: null, // TODO
-    live: null,    // TODO
-    repo: null,    // TODO
-  },
-  // TODO: add 1–2 web-design client samples below as they're ready.
-  {
-    title: 'Client Web Design — Coming Soon',
-    outcome: 'A web-design client sample slot. Swap in a real project once delivered.',
-    note: 'Placeholder',
-    stack: ['React', 'Design'],
-    image: null,
-    preview: null,
-    live: null,
-    repo: null,
-    placeholder: true,
+    image: '/work/quattrorealm.png',
+    preview: '/work/quattrorealm.mov',
+    live: 'https://youtu.be/1s_1gz1ykmo?si=Eu1C2tSVd_v9WT00',
+    repo: 'https://github.com/Infiniper/QuattroRealm',
   },
   {
-    title: 'Client Web Design — Coming Soon',
-    outcome: 'A second web-design client sample slot.',
-    note: 'Placeholder',
-    stack: ['React', 'Design'],
-    image: null,
-    preview: null,
-    live: null,
-    repo: null,
-    placeholder: true,
+    title: 'Multilingual Hate-Speech Detection',
+    outcome:
+      'Fine-tuned MuRIL for Hindi/English/Hinglish; Gradio app on Hugging Face Spaces. 80% acc / 0.76 macro-F1.',
+    note: 'Samsung Innovation Campus',
+    stack: ['MuRIL', 'NLP', 'Hugging Face', 'Gradio', 'Python'],
+    image: '/work/hate-speech.png',
+    preview: '/work/hate-speech.mov',
+    live: 'https://huggingface.co/spaces/infiniper/Multilingual-Hate-Speech-Detector',
+    repo: 'https://github.com/Infiniper/MuRIL-Hate-Text-Detector',
   },
 ]
 
-// Pricing — `local` is ₹, `intl` is $. `null` = not offered in that market.
+// Pricing — `local` is ₹ (INR), `intl` is $ (USD). `null` = not offered in that
+// market. `category` groups rows under subheaders; `popular` highlights an
+// anchor tier per category. 
 export const PRICING = [
-  { service: 'Static landing page', local: '3,000–6,000', intl: '40–75' },
-  { service: 'Portfolio site (React)', local: '7,000–10,000', intl: '80–130' },
-  { service: 'Business site (React + backend)', local: '15,000–25,000', intl: '200–350' },
-  { service: 'E-commerce store', local: '30,000–55,000', intl: '400–700' },
-  { service: 'Simple ML model', local: '5,000–15,000', intl: '80–200' },
-  { service: 'NLP / text classifier', local: '10,000–25,000', intl: '150–350' },
-  { service: 'Fine-tuning a transformer', local: '25,000–60,000', intl: '350–700' },
-  { service: 'Logo design', local: '500–1,500', intl: '10–25' },
-  { service: 'Wedding invite (animated)', local: '1,000–2,500', intl: null },
-  { service: 'DSA / ML coaching', local: '300–800 / hr', intl: null },
+  // ── Websites ──────────────────────────────────────────────
+  { category: 'Websites', service: 'Static Landing Page',             local: '2,500–5,000',   intl: '35–65' },
+  { category: 'Websites', service: 'Multi-Page Static Business Site',                   local: '7,000–15,000',  intl: '90–160', popular: true },
+  { category: 'Websites', service: 'Business Dynamic Site (with Backend)',    local: '15,000–50,000', intl: '200–750' },
+  { category: 'Websites', service: 'E-commerce / Site with CMS / Admin Panel',              local: '20,000–40,000', intl: '300–540' },
+  { category: 'Websites', service: 'Cinematic 3D / Interactive Site',          local: '15,000–60,000', intl: '350–800' },
+
+  // ── Mobile Apps (Android/iOS) ─────────────────────────────────────
+  { category: 'Mobile Apps (Android/iOS)', service: 'Mobile App (React Native)',            local: '20,000–1,20,000', intl: '300–1,600' },
+
+  // ── Design & Creatives ────────────────────────────────────────────────
+  { category: 'Design & Creatives', service: 'Logo — Single Concept (3 Versions)',                     local: '500–1,000',   intl: '10–20' },
+  { category: 'Design & Creatives', service: 'Logo — Multiple Concepts / Versions + Files',          local: '1,000–3,500', intl: '25–50' },
+  { category: 'Design & Creatives', service: 'Logo + Brand Kit (Colours, Fonts, Assets)', local: '1,500–8,000', intl: '50–110' },
+  { category: 'Design & Creatives', service: 'Social Media Posters / Banners — each',         local: '150–500',     intl: '5–12' },
+  { category: 'Design & Creatives', service: 'Invitation (Image / Animated Video)',                 local: '1,000–2,500', intl: null },
+  { category: 'Design & Creatives', service: 'Poster / Flyer (print-ready)',              local: '600–1,500',   intl: '10–25' },
+  { category: 'Design & Creatives', service: 'Social Media Kit — (8-10 Graphics)',          local: '2,000–5,000', intl: '30–70' },
+
+  // ── AI / ML & Coaching ────────────────────────────────────
+  { category: 'Others', service: 'AI / ML Project',               local: '5,000–60,000',  intl: '80–700' },
+  { category: 'Others', service: 'DSA / AI / Web Development',  local: '400–800 /hour',       intl: null },
+  { category: 'Others', service: 'Classes 5 - 10',  local: '250–700 /hour',       intl: null },
+]
+
+// À la carte — stacked on top of any package.
+export const ADD_ONS = [
+  { service: 'Extra Pages',                          local: '300–2,000',    intl: '12–28' },
+  { service: 'Custom Animations / Scroll Effects',  local: '500–6,000',  intl: '30–85' },
+  { service: 'SEO Setup (meta, sitemap, speed)',    local: '1,000–5,000',  intl: '30–70' },
+  { service: 'Domain + Hosting Setup & Deploy',     local: '500–1,500',    intl: '8–20' },
+  { service: 'Contact Form / WhatsApp Integration', local: '100–1,500',    intl: '8–20' },
+  { service: 'CMS / Admin Panel',                   local: '5,000–15,000', intl: '70–200' },
+  { service: 'Content / Copywriting — per page',    local: '500–1,500',    intl: '8–20' },
+  { service: 'Maintenance & Support',     local: '100–3,000 /month',  intl: '15–40 /month' },
 ]
 
 export const TEAM = [

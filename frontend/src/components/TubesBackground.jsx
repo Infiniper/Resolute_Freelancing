@@ -7,18 +7,21 @@ const LIGHT_COLORS = ['#3b82f6', '#60a5fa', '#22d3ee', '#8b5cf6']
 
 const randHex = () => '#' + Math.floor(Math.random() * 0xffffff).toString(16).padStart(6, '0')
 
-// Same device test the stylesheet uses for desktop interactivity, plus reduced
-// motion. Touch-only devices never get the second WebGL context (the effect
-// follows a cursor they don't have); reduced-motion users keep the static
-// gradient. No width gate: phones are already covered by hover/pointer, and a
-// narrow *desktop* window just means a smaller, cheaper canvas.
-const DESKTOP_QUERY = '(hover: hover) and (pointer: fine)'
+// Reduced motion is the only hard gate: those users keep the static gradient.
+// Touch is now allowed — the tube cluster still renders an animated neon look
+// even without a hovering cursor, and a tap on the section randomizes colors
+// the same way a click does. A narrow desktop window just means a smaller,
+// cheaper canvas.
 const REDUCED_QUERY = '(prefers-reduced-motion: reduce)'
+const COARSE_QUERY = '(pointer: coarse)'
 const canRun = () =>
   typeof window !== 'undefined' &&
   !!window.matchMedia &&
-  window.matchMedia(DESKTOP_QUERY).matches &&
   !window.matchMedia(REDUCED_QUERY).matches
+const isCoarse = () =>
+  typeof window !== 'undefined' &&
+  !!window.matchMedia &&
+  window.matchMedia(COARSE_QUERY).matches
 
 // Cache the heavy tubes bundle (it ships its own self-contained three, so it
 // won't clash with the app's three) — scrolling in and out of a tubes section
@@ -70,7 +73,7 @@ export default function TubesBackground() {
   // with DevTools docked, and the effect stayed dead for the whole session.)
   useEffect(() => {
     if (typeof window === 'undefined' || !window.matchMedia) return
-    const queries = [window.matchMedia(DESKTOP_QUERY), window.matchMedia(REDUCED_QUERY)]
+    const queries = [window.matchMedia(REDUCED_QUERY)]
     const update = () => setEnabled(canRun())
     queries.forEach((q) => q.addEventListener('change', update))
     return () => queries.forEach((q) => q.removeEventListener('change', update))
@@ -141,10 +144,23 @@ export default function TubesBackground() {
         // pixel ratio of 2 — its main cost — so relax that toward 1. (An earlier
         // pass *skipped init entirely* whenever quality < 1; one frame-rate dip
         // during the heavy storm hero and the tubes never appeared at all.)
-        if (signals.quality < 1 && app.three) {
+        // Phones get the same cheaper cap by default (coarse pointer ≈ touch
+        // device): keeps the second WebGL context affordable on mid-range
+        // hardware while still showing the effect.
+        const coarse = isCoarse()
+        if ((signals.quality < 1 || coarse) && app.three) {
           app.three.minPixelRatio = 1
           app.three.maxPixelRatio = 1.25
           app.three.resize()
+        }
+        // On phones the default tube cluster reads as one giant infinity
+        // ribbon filling the section — push the camera back so the whole
+        // cluster appears as a smaller contained accent. (The lib seats the
+        // camera at z=5 by default; ~9 pulls it back without losing the
+        // bloom-blue depth.) Position-only change → no projection update
+        // needed; the lib's own resize/aspect handling is untouched.
+        if (coarse && app.three?.camera) {
+          app.three.camera.position.z = 5
         }
         if (!_bootLogged) {
           _bootLogged = true
