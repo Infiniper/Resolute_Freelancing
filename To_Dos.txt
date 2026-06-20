@@ -1,1 +1,6 @@
+Immediate:
+1. Add yahora video, sanshi image & video.
+
+
+Later:
 1. In services page the last card is getting attached to the next section without any space which is wierd.

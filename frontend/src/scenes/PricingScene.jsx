@@ -1,6 +1,6 @@
 import { useRef } from 'react'
 import { useFrame } from '@react-three/fiber'
-import Planet from '../3d/Planet'
+import RingedPlanet from '../3d/RingedPlanet'
 import GLBModel from '../3d/GLBModel'
 import { MODELS } from '../3d/models'
 
@@ -19,9 +19,9 @@ export default function PricingScene({ mobile }) {
   const r = mobile ? 1.5 : 2.6
 
   return (
-    <group position={mobile ? [1.5, -5.5, -6] : [7, 0.5, -3]} scale={mobile ? 0.6 : 1}>
+    <group position={mobile ? [1.5, -5.5, -6] : [8, 3.5, -3]} scale={mobile ? 0.6 : 1}>
       <group ref={orbit}>
-        <Planet position={[r, 0, 0]} radius={0.95} color="#2f6bd6" atmosphere="#6ea8ff" />
+        <RingedPlanet position={[r, 0, 0]} radius={0.95} color="#2f6bd6" atmosphere="#6ea8ff" />
         <GLBModel
           url={MODELS.planet}
           position={[-r, 0, 0]}
