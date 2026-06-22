@@ -68,7 +68,7 @@ export const PROJECTS = [
     note: 'Startup · Marketplace',
     stack: ['React', 'Vite', 'React Router'],
     image: '/work/yahora.png',
-    preview: '/work/yahora.mov',
+    preview: '/work/yahora.mp4',
     live: 'https://yahora.netlify.app/',
     repo: 'https://github.com/Infiniper/Yahora',
   },
