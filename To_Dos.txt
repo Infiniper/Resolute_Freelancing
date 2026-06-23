@@ -1,5 +1,7 @@
 Immediate:
-1. Add yahora video, sanshi image & video.
+1. On mobile, we have to scroll to much on home page for the 's'.
+2. The height of representatives images in the service page is very less. Increase it.
+3. In all CTA, there is a lot of space in mobile phone at top and bottom. Reduce it from mobile (and a bit from desktop as well).
 
 
 Later:

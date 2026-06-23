@@ -7,12 +7,6 @@ import { CONTACT, EMAILJS } from '../data/content'
 
 const emailOk = (v) => /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(v)
 
-const SOCIALS = [
-  ['LinkedIn', CONTACT.linkedin],
-  ['GitHub', CONTACT.github],
-  ['LeetCode', CONTACT.leetcode],
-]
-
 // The team number the form's WhatsApp button opens a chat with.
 const TEAM_WA = CONTACT.phones[0]?.wa
 
@@ -192,17 +186,6 @@ export default function Contact() {
                 </ul>
               )}
 
-              <ul className="contact-socials">
-                {SOCIALS.map(([label, url]) => (
-                  <li key={label}>
-                    {url ? (
-                      <a href={url} target="_blank" rel="noreferrer">{label} ↗</a>
-                    ) : (
-                      <span className="link-todo">{label}: TODO</span>
-                    )}
-                  </li>
-                ))}
-              </ul>
             </div>
             <p className="contact-fineprint">
               Prefer WhatsApp or a call? Use the numbers above — no form required.
