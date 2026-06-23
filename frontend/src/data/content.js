@@ -197,9 +197,7 @@ export const TEAM = [
 export const CREDENTIALS = [
   'Samsung Innovation Campus',
   'Amazon ML Challenge — AIR 1122',
-  'NPTEL — IIT Madras / IIT Roorkee',
   'Hackathon Winners',
-  '240+ LeetCode',
 ]
 
 export const TRUST_STRIP = [
@@ -208,9 +206,6 @@ export const TRUST_STRIP = [
 
 export const CONTACT = {
   email: 'perffinity360@gmail.com',
-  linkedin: 'https://www.linkedin.com/in/vishwajeet1567',
-  github: 'https://github.com/infiniper/',
-  leetcode: 'https://leetcode.com/u/infiniper/',
   // Phone / WhatsApp — both reachable. `label` is for display, `tel` keeps the
   // +country format for tel: links, `wa` is digits-only for wa.me click-to-chat.
   // The first entry is the team number the contact-form WhatsApp button uses.
