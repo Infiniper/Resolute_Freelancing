@@ -52,7 +52,13 @@ body {
   background-color: #05070e;
   color: #f1f5f9;
   font-family: var(--font-sans);
+  /* `hidden` is only the fallback for engines without `clip`: with the html
+     scroller already non-visible, `hidden` turns *body itself* into a scroll
+     container — which silently breaks every position:sticky descendant (the
+     storm hero's pinned viewport and its Scroll hint scrolled away with the
+     track). `clip` clips the axis without creating a scroll container. */
   overflow-x: hidden;
+  overflow-x: clip;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
 }
@@ -446,6 +452,10 @@ body {
   position: sticky;
   top: 0;
   height: 100vh;
+  /* Small-viewport height where supported: with the mobile URL bar expanded,
+     100vh overflows the visible screen and pushes the bottom-anchored Scroll
+     hint under the browser chrome. */
+  height: 100svh;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -478,14 +488,16 @@ body {
      above this section's gradient, below the payoff text — never slipping behind
      other page layers. */
   isolation: isolate;
-  min-height: 100vh;
+  /* Tall enough to read as a "moment", short of a full viewport — 100vh left
+     big empty bands above/below the copy, 75vh felt cramped (owner-tuned). */
+  min-height: 85vh;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   text-align: center;
   gap: 1.5rem;
-  padding: 6rem clamp(1.25rem, 5vw, 3rem);
+  padding: 5rem clamp(1.25rem, 5vw, 3rem);
   /* Fully opaque dark base (a subtle blue glow on top) so the 3D word behind can
      never bleed through the payoff — it has dissolved by now, this is the safety net. */
   background:
@@ -494,6 +506,20 @@ body {
 }
 .home-payoff .lead {
   max-width: 52ch;
+}
+
+/* Phones: the desktop scroll length reads as endless thumb-swiping — compress
+   the storm track (the scrub compresses with it: same choreography, ~⅓ less
+   scroll between hero → surprise → payoff) and let the payoff hug its content. */
+@media (max-width: 720px) {
+  .storm-track {
+    height: 420vh;
+  }
+  .home-payoff {
+    min-height: 0;
+    padding-top: 3.5rem;
+    padding-bottom: 3.5rem;
+  }
 }
 
 /* ── Neon-tubes background, scoped to the payoff section (Item 5) ──
@@ -1064,6 +1090,14 @@ body {
   height: 100%;
   /* GSAP drives transform/opacity imperatively; will-change keeps it smooth. */
   will-change: transform, opacity;
+  /* Deck cards physically overlap — through the .glass-card translucency the
+     deeper cards' text ghosts straight into the one on top. Solid surface
+     instead (the backdrop blur goes with it: nothing readable left to frost),
+     plus a soft drop shadow so the peeking edges still separate. */
+  background: #0d1120;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  box-shadow: 0 18px 40px rgba(3, 5, 10, 0.55);
 }
 
 /* ── Mobile / reduced-motion: plain vertical list ── */
@@ -1077,10 +1111,17 @@ body {
   gap: 1rem;
   max-width: 60rem;
 }
+/* The service photos are 1:1 — don't let a short text column squash the list
+   card's media panel into a shallow letterbox crop. A taller row shows
+   meaningfully more of the square image. (List mode only: the desktop deck's
+   card height is fixed by .stack-deck.) */
+.services-list .service-media {
+  min-height: 13rem;
+}
 /* ── Closing CTA "moment" — Work / Services / Pricing / About ──
-   A full-height, opaque neon-tubes section that closes a content page: the same
-   tube effect as the Home payoff (`.tubes-wrap` fills it at z-index:-1), reused
-   here as a per-page call to action. It's opaque + full-viewport on purpose, so
+   A tall, opaque neon-tubes section that closes a content page: the same tube
+   effect as the Home payoff (`.tubes-wrap` fills it at z-index:-1), reused
+   here as a per-page call to action. It's opaque + full-width on purpose, so
    the tubes own their region and the route's fixed focal 3D model never bleeds
    through — mirrors the `.home-payoff` tube-hosting contract. */
 .cta-band {
@@ -1088,14 +1129,16 @@ body {
   /* Own stacking context so the tubes background (z-index:-1) stays contained:
      above this section's gradient, below the CTA copy. */
   isolation: isolate;
-  min-height: 100vh;
+  /* A "moment", not a full viewport — 100vh read as empty bands above/below,
+     75vh felt cramped (owner-tuned). */
+  min-height: 85vh;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   text-align: center;
   gap: 1.5rem;
-  padding: 6rem clamp(1.25rem, 5vw, 3rem);
+  padding: 5rem clamp(1.25rem, 5vw, 3rem);
   /* Fully opaque base (a faint blue glow on top) so nothing behind bleeds through. */
   background:
     radial-gradient(ellipse 80% 60% at 50% 38%, rgba(59, 130, 246, 0.1), transparent 70%),
@@ -1111,6 +1154,15 @@ body {
 .cta-band .eyebrow,
 .cta-band .display-lg {
   text-shadow: 0 2px 18px rgba(5, 7, 14, 0.85);
+}
+/* Phones: hug the content — the band still closes the page, without the dead
+   air above/below. */
+@media (max-width: 720px) {
+  .cta-band {
+    min-height: 0;
+    padding-top: 3.5rem;
+    padding-bottom: 3.5rem;
+  }
 }
 
 /* Work */

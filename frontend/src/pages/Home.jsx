@@ -8,7 +8,7 @@ import TubesBackground from '../components/TubesBackground'
 import useReducedMotion from '../hooks/useReducedMotion'
 import { signals } from '../scenes/signals'
 import { TRUST_STRIP } from '../data/content'
-import { S_FLY_START } from '../data/stormConfig'
+import { S_FLY_START, range } from '../data/stormConfig'
 
 gsap.registerPlugin(ScrollTrigger)
 
@@ -41,6 +41,7 @@ export default function Home() {
   const reduced = useReducedMotion()
   const trackRef = useRef(null)
   const payoffRef = useRef(null)
+  const hintRef = useRef(null)
 
   // The fixed canvas plays the storm; scrolling the tall track drives it 0→1.
   // A second trigger on the payoff drives `homeReveal` 1→0 as it scrolls in, so
@@ -54,7 +55,17 @@ export default function Home() {
       start: 'top top',
       end: 'bottom bottom',
       scrub: true,
-      onUpdate: (self) => { signals.homeScroll = self.progress },
+      onUpdate: (self) => {
+        signals.homeScroll = self.progress
+        // The Scroll hint holds through the whole storm build, then fades out
+        // as the "s" tears loose (the surprise starting to appear) — and back
+        // in if the user scrubs up past that point. Set imperatively: it's
+        // scrub-driven, a React state write per scroll frame would re-render.
+        if (hintRef.current) {
+          hintRef.current.style.opacity =
+            1 - range(self.progress, S_FLY_START, S_FLY_START + 0.15)
+        }
+      },
       // The scroll may never rest while the "s" is mid-flight (progress
       // S_FLY_START→1): if the user stops scrolling there, auto-scroll the
       // rest of the way until the "s" seats into "urprise!" — or, if they
@@ -117,7 +128,7 @@ export default function Home() {
             stands firm while its “s” tears loose and tumbles down to spell
             “Surprise”.
           </p>
-          <div className="scroll-hint" aria-hidden>
+          <div ref={hintRef} className="scroll-hint" aria-hidden>
             <span>Scroll</span>
             <span className="scroll-hint-line" />
           </div>
