@@ -368,8 +368,10 @@ Scripts: `npm run dev` · `npm run build` · `npm run preview` · `npm run lint`
     payoff + CTA bands hug content there (`min-height: 0`, padding-block
     3.5rem).
   - **Tube CTA bands slimmed** (`.home-payoff` + `.cta-band`): `min-height`
-    100vh → **75vh**, padding-block 6rem → 4rem — still a closing "moment",
-    no more empty bands above/below the copy.
+    100vh → **85vh**, padding-block 6rem → 5rem — still a closing "moment",
+    no more empty bands above/below the copy. (First pass went to 75vh/4rem;
+    owner: too short on desktop, mobile fine — nudged back up. Mobile keeps
+    the content-hugging override.)
   - **Services list media taller**: `.services-list .service-media`
     `min-height: 13rem` — the 1:1 service photos were letterboxed shallow
     whenever a short text column set the row height (deck cards unaffected —

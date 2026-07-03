@@ -3,7 +3,7 @@ import { motion } from 'framer-motion'
 import TubesBackground from './TubesBackground'
 
 /**
- * A tall (~¾-viewport), opaque "moment" that closes a content page: the
+ * A tall (~85% viewport), opaque "moment" that closes a content page: the
  * neon-tubes cursor effect (the same one behind the Home payoff) fills the
  * section and the tubes lean toward the cursor, with a centered call-to-action
  * on top.

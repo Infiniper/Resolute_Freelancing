@@ -489,15 +489,15 @@ body {
      other page layers. */
   isolation: isolate;
   /* Tall enough to read as a "moment", short of a full viewport — 100vh left
-     big empty bands above/below the copy. */
-  min-height: 75vh;
+     big empty bands above/below the copy, 75vh felt cramped (owner-tuned). */
+  min-height: 85vh;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   text-align: center;
   gap: 1.5rem;
-  padding: 4rem clamp(1.25rem, 5vw, 3rem);
+  padding: 5rem clamp(1.25rem, 5vw, 3rem);
   /* Fully opaque dark base (a subtle blue glow on top) so the 3D word behind can
      never bleed through the payoff — it has dissolved by now, this is the safety net. */
   background:
@@ -1129,15 +1129,16 @@ body {
   /* Own stacking context so the tubes background (z-index:-1) stays contained:
      above this section's gradient, below the CTA copy. */
   isolation: isolate;
-  /* A "moment", not a full viewport — 100vh read as empty bands above/below. */
-  min-height: 75vh;
+  /* A "moment", not a full viewport — 100vh read as empty bands above/below,
+     75vh felt cramped (owner-tuned). */
+  min-height: 85vh;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   text-align: center;
   gap: 1.5rem;
-  padding: 4rem clamp(1.25rem, 5vw, 3rem);
+  padding: 5rem clamp(1.25rem, 5vw, 3rem);
   /* Fully opaque base (a faint blue glow on top) so nothing behind bleeds through. */
   background:
     radial-gradient(ellipse 80% 60% at 50% 38%, rgba(59, 130, 246, 0.1), transparent 70%),
