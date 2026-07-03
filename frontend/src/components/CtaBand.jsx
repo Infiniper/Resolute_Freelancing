@@ -3,14 +3,15 @@ import { motion } from 'framer-motion'
 import TubesBackground from './TubesBackground'
 
 /**
- * A full-height, opaque "moment" that closes a content page: the neon-tubes
- * cursor effect (the same one behind the Home payoff) fills the section and the
- * tubes lean toward the cursor, with a centered call-to-action on top.
+ * A tall (~¾-viewport), opaque "moment" that closes a content page: the
+ * neon-tubes cursor effect (the same one behind the Home payoff) fills the
+ * section and the tubes lean toward the cursor, with a centered call-to-action
+ * on top.
  *
  * It's a *dedicated, opaque* section on purpose. The site's 3D lives in one
  * persistent canvas behind the DOM, and each route keeps its focal model fixed
  * on screen — so a transparent tube overlay would fight that model for the same
- * pixels. Giving the tubes their own opaque, full-viewport band means they own
+ * pixels. Giving the tubes their own opaque, full-width band means they own
  * their region cleanly (no 3D bleeds through), while the space backdrop + that
  * route's focal model keep the page above it. Drop it in as a sibling AFTER the
  * `.page` column. The tube canvas itself is lazy / IntersectionObserver-gated /
