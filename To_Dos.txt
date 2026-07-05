@@ -1,8 +1,6 @@
 Immediate:
 1. On mobile, we have to scroll to much on home page for the 's'.
-2. The height of representatives images in the service page is very less. Increase it.
-3. In all CTA, there is a lot of space in mobile phone at top and bottom. Reduce it from mobile (and a bit from desktop as well).
-
 
 Later:
 1. In services page the last card is getting attached to the next section without any space which is wierd.
+2. Update the About and Contact Pages.
