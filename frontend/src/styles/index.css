@@ -1163,6 +1163,12 @@ body {
     padding-top: 3.5rem;
     padding-bottom: 3.5rem;
   }
+  /* The desktop `nowrap` (single-line "moment") overflows a phone's width and,
+     because the band is center-aligned, gets clipped on BOTH sides. Let the
+     headline wrap here so it stays fully on-screen. */
+  .cta-band .display-lg {
+    white-space: normal;
+  }
 }
 
 /* Work */
